@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS memberships (
     user_id BIGINT UNSIGNED NOT NULL,
     organization_id BIGINT UNSIGNED NOT NULL,
     project_id BIGINT UNSIGNED NULL,
-    role VARCHAR(60) NOT NULL DEFAULT 'user',
+    role_key VARCHAR(60) NOT NULL DEFAULT 'user',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     KEY idx_memberships_user (user_id),
