@@ -9,40 +9,40 @@
 - [x] Define offline-first standard
 - [ ] Confirm production hub domain
 - [ ] Identify the source repository for Deliveries
-- [ ] Create Suite brand/logo/icon family
+- [x] Create initial Suite brand/logo SVG family
 
 ## Phase 1 — Hub V1
 
 Build the first deployable Suite PWA with:
 
-- [ ] secure login
-- [ ] organisation model
-- [ ] project/site model
-- [ ] user memberships and roles
-- [ ] responsive dashboard
-- [ ] project selector
-- [ ] module registry
-- [ ] module cards
-- [ ] connectivity indicator
-- [ ] sync-status component
-- [ ] notification shell
-- [ ] admin area
-- [ ] PWA manifest
-- [ ] service worker/application shell
-- [ ] install UX for Android/iOS
-- [ ] offline landing/dashboard shell
+- [x] secure login
+- [x] organisation model
+- [x] project/site model
+- [x] user memberships and roles
+- [x] responsive dashboard
+- [x] project selector
+- [x] module registry
+- [x] module cards
+- [x] connectivity indicator
+- [x] sync-status component
+- [x] notification shell
+- [x] admin area
+- [x] PWA manifest
+- [x] service worker/application shell
+- [x] install UX for Android/iOS
+- [x] offline landing/dashboard shell
 - [ ] favicon/app icon/social metadata
 
 Initial module cards:
 
-- [ ] Defects
-- [ ] Documents
-- [ ] Safety
-- [ ] Permits
-- [ ] Handover
-- [ ] Programme
-- [ ] Status
-- [ ] Deliveries
+- [x] Defects
+- [x] Documents
+- [x] Safety
+- [x] Permits
+- [x] Handover
+- [x] Programme
+- [x] Status
+- [x] Deliveries
 
 ## Phase 2 — Shared Identity
 
