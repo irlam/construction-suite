@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS memberships (
     user_id INTEGER NOT NULL,
     organization_id INTEGER NOT NULL,
     project_id INTEGER NULL,
-    role TEXT NOT NULL DEFAULT 'user',
+    role_key TEXT NOT NULL DEFAULT 'user',
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE,
