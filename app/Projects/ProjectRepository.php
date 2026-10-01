@@ -77,7 +77,7 @@ final class ProjectRepository
         }
 
         $stmt = Connection::pdo()->prepare(
-            'SELECT role FROM memberships
+            'SELECT role_key FROM memberships
              WHERE user_id = ? AND organization_id = ?
                AND (project_id = ? OR project_id IS NULL)
              ORDER BY CASE WHEN project_id = ? THEN 0 ELSE 1 END
