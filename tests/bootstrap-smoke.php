@@ -1,0 +1,36 @@
+<?php
+declare(strict_types=1);
+
+require_once dirname(__DIR__) . '/app/bootstrap.php';
+
+$failures = [];
+$check = static function (bool $condition, string $message) use (&$failures): void {
+    if (!$condition) $failures[] = $message;
+};
+
+$modules = suite_modules()->all('platform_admin');
+$check(count($modules) === 8, 'Expected eight initial Suite modules.');
+
+foreach ($modules as $module) {
+    $check(isset($module['key'], $module['name'], $module['url']), 'Module registry entry is incomplete.');
+    $check(str_starts_with((string) $module['url'], 'https://'), 'Module URLs must use HTTPS.');
+}
+
+foreach ([
+    'public/index.php',
+    'public/login.php',
+    'public/offline.html',
+    'public/service-worker.js',
+    'public/manifest.webmanifest',
+    'public/assets/css/app.css',
+    'public/assets/js/app.js',
+] as $required) {
+    $check(is_file(SUITE_ROOT . '/' . $required), 'Missing required Hub file: ' . $required);
+}
+
+if ($failures) {
+    fwrite(STDERR, implode(PHP_EOL, $failures) . PHP_EOL);
+    exit(1);
+}
+
+echo "PASS: Construction Suite bootstrap, registry and PWA shell checks.\n";
