@@ -58,7 +58,7 @@ Existing apps remain separately deployable during the transition. The Suite will
 
 ## Current phase
 
-**Phase 0 — Foundation**
+**Phase 1 — Hub V1**
 
 See:
 
@@ -67,6 +67,19 @@ See:
 - [Offline-first standard](docs/OFFLINE-FIRST.md)
 - [Roadmap](docs/ROADMAP.md)
 
-## Status
+## Hub V1 now in the repository
 
-Early foundation work. Do not deploy this repository over any existing production application yet.
+The first deployable Hub shell now includes:
+
+- secure Suite login with throttled failed attempts
+- one-time browser installer for the first organisation, site and platform administrator
+- organisation/project/user/membership schema for MySQL and SQLite
+- project switching and role-aware module registry
+- responsive desktop/mobile dashboard
+- live launch cards for the eight initial construction modules
+- PWA manifest, service worker, connectivity state and offline shell
+- platform administration for organisations, projects and users
+- versioned current-user and health API endpoints
+- GitHub Actions PHP lint/smoke checks
+
+See [Deployment](docs/DEPLOYMENT.md) before putting the Hub on a server. Existing production applications remain separate and unchanged.
