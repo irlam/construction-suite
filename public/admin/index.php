@@ -41,6 +41,10 @@ try {
     <article><strong><?= suite_e($dbStatus) ?></strong><span>Database</span></article>
     <article><strong><?= suite_e((string) \Suite\Database\Connection::driver()) ?></strong><span>DB driver</span></article>
   </section>
+  <section class="admin-shortcuts">
+    <a class="admin-shortcut" href="/admin/projects.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#site"></use></svg></span><div><strong>Organisations & projects</strong><span>Create sites and control active projects</span></div></a>
+    <a class="admin-shortcut" href="/admin/users.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#settings"></use></svg></span><div><strong>Users & access</strong><span>Create accounts and assign project roles</span></div></a>
+  </section>
   <section class="admin-panel">
     <div class="section-heading compact"><div><p class="eyebrow">MODULE REGISTRY</p><h2>Connected applications</h2></div></div>
     <div class="admin-table">
