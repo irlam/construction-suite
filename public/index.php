@@ -121,7 +121,7 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
       <span><?= count($modules) ?> modules</span>
     </section>
 
-    <section class="module-grid">
+    <section class="module-grid" id="modules">
       <?php foreach ($modules as $module): ?>
         <a class="module-card accent-<?= suite_e((string) $module['accent']) ?>"
            href="<?= suite_e((string) $module['url']) ?>"
