@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111827"><title>Offline · Construction Suite</title><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/css/app.css"></head>
+<body class="offline-page">
+<main class="offline-card">
+  <img src="/assets/brand/logo.svg" alt="" width="64" height="64">
+  <p class="eyebrow" style="color:#f5b544;margin-top:1.2rem">OFFLINE MODE</p>
+  <h1>You are still on site.</h1>
+  <p>Construction Suite cannot reach the server right now. The app shell is available and offline-capable modules can keep their own field work safely on this device.</p>
+  <div class="offline-context"><span>Last active project</span><strong id="offline-project">Construction Suite</strong><span id="offline-org"></span></div>
+  <p>When signal returns, reopen the module you were using and check that its queued work has synchronised before removing local copies.</p>
+  <button class="button secondary" type="button" onclick="location.reload()">Try connection again</button>
+</main>
+<script>try{const c=JSON.parse(localStorage.getItem('suiteContext')||'{}');if(c.project)document.getElementById('offline-project').textContent=c.project;if(c.organisation)document.getElementById('offline-org').textContent=c.organisation}catch(_){}</script>
+</body></html>
