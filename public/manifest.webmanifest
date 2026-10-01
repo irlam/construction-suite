@@ -1,0 +1,18 @@
+{
+  "name": "Construction Suite",
+  "short_name": "Suite",
+  "description": "Mobile-first construction management hub for project teams.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f3f5f8",
+  "theme_color": "#111827",
+  "orientation": "any",
+  "icons": [
+    {"src":"/assets/brand/favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ],
+  "shortcuts": [
+    {"name":"Dashboard","short_name":"Home","url":"/"},
+    {"name":"Notifications","short_name":"Alerts","url":"/#notifications"}
+  ]
+}
