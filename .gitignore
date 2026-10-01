@@ -1,0 +1,35 @@
+# Local configuration / secrets
+.env
+.env.*
+!.env.example
+config.local.php
+*.local.php
+
+# Runtime/private storage
+/storage/*
+!/storage/.gitkeep
+/private/
+/uploads/
+/backups/
+/logs/
+*.log
+*.sqlite
+*.sqlite3
+*.db
+
+# Dependencies
+/vendor/
+/node_modules/
+
+# Test/runtime artefacts
+/coverage/
+/test-results/
+/playwright-report/
+/tmp/
+/.cache/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
