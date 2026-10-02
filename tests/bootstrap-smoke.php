@@ -16,6 +16,10 @@ foreach ($modules as $module) {
     $check(str_starts_with((string) $module['url'], 'https://'), 'Module URLs must use HTTPS.');
 }
 
+$setupSource = (string) file_get_contents(SUITE_ROOT . '/public/setup.php');
+$check(str_contains($setupSource, 'role_key'), 'First-run setup must insert memberships using role_key.');
+$check(!str_contains($setupSource, 'project_id, role)'), 'Legacy memberships role column remains in setup.');
+
 foreach ([
     'public/index.php',
     'public/login.php',
