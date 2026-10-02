@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $error === null) {
             $userId = (int) $pdo->lastInsertId();
 
             $stmt = $pdo->prepare(
-                'INSERT INTO memberships (user_id, organization_id, project_id, role)
+                'INSERT INTO memberships (user_id, organization_id, project_id, role_key)
                  VALUES (?, ?, ?, ?)'
             );
             $stmt->execute([$userId, $organizationId, $projectId, 'admin']);
