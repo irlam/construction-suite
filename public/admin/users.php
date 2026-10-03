@@ -150,13 +150,14 @@ $users = $pdo->query(
     <div class="section-heading compact"><div><p class="eyebrow">USER REGISTER</p><h2><?= count($users) ?> accounts</h2></div></div>
     <div class="admin-table">
       <?php foreach ($users as $account): ?>
-        <div class="admin-row admin-row-actions">
+        <div class="admin-row admin-row-actions admin-row-five">
           <div class="avatar-small"><?= suite_e(strtoupper(substr((string) $account['name'], 0, 1))) ?></div>
           <div>
             <strong><?= suite_e((string) $account['name']) ?><?= (bool) $account['is_platform_admin'] ? ' · Platform admin' : '' ?></strong>
             <span><?= suite_e((string) $account['email']) ?> · <?= suite_e((string) ($account['project_names'] ?: 'No project')) ?></span>
           </div>
           <span class="role-pill"><?= suite_e((string) ($account['roles'] ?: ((bool) $account['is_platform_admin'] ? 'platform_admin' : 'user'))) ?></span>
+          <a class="button small secondary" href="/admin/user-edit.php?id=<?= (int) $account['id'] ?>">Edit</a>
           <?php if (!(bool) $account['is_platform_admin']): ?>
             <form method="post">
               <input type="hidden" name="csrf_token" value="<?= suite_e($auth->csrfToken()) ?>">
