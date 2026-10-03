@@ -10,6 +10,8 @@ $check = static function (bool $condition, string $message) use (&$failures): vo
 
 $modules = suite_modules()->all('platform_admin');
 $check(count($modules) === 8, 'Expected eight initial Suite modules.');
+$check(class_exists(\Suite\Modules\ModuleHealth::class), 'Module health service is not wired.');
+$check(class_exists(\Suite\Support\Audit::class), 'Audit service is not wired.');
 
 foreach ($modules as $module) {
     $check(isset($module['key'], $module['name'], $module['url']), 'Module registry entry is incomplete.');
@@ -28,6 +30,12 @@ foreach ([
     'public/manifest.webmanifest',
     'public/assets/css/app.css',
     'public/assets/js/app.js',
+    'public/profile.php',
+    'public/api/v1/module-health.php',
+    'public/admin/organisation-edit.php',
+    'public/admin/project-edit.php',
+    'public/admin/user-edit.php',
+    'public/admin/audit.php',
 ] as $required) {
     $check(is_file(SUITE_ROOT . '/' . $required), 'Missing required Hub file: ' . $required);
 }
