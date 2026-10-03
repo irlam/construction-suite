@@ -74,6 +74,7 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
           <strong><?= suite_e((string) $user['name']) ?></strong>
           <span><?= suite_e((string) $user['email']) ?></span>
           <span class="role-pill"><?= suite_e(str_replace('_', ' ', $role)) ?></span>
+          <a href="/profile.php">My profile & password</a>
           <?php if ($auth->isPlatformAdmin($user)): ?><a href="/admin/">Suite administration</a><?php endif; ?>
           <form method="post" action="/logout.php">
             <input type="hidden" name="csrf_token" value="<?= suite_e($auth->csrfToken()) ?>">
@@ -110,7 +111,7 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
     </section>
 
     <section class="status-grid" aria-label="Suite status">
-      <article><span class="status-icon blue"><svg><use href="/assets/icons.svg#grid"></use></svg></span><div><strong><?= count($modules) ?></strong><span>Connected tools</span></div></article>
+      <article><span class="status-icon blue"><svg><use href="/assets/icons.svg#grid"></use></svg></span><div><strong data-module-health-summary>Checking…</strong><span>Module availability</span></div></article>
       <article><span class="status-icon green"><svg><use href="/assets/icons.svg#sync"></use></svg></span><div><strong data-sync-label>Up to date</strong><span>Device sync</span></div></article>
       <article><span class="status-icon amber"><svg><use href="/assets/icons.svg#bell"></use></svg></span><div><strong><?= $notificationCount ?></strong><span>Unread alerts</span></div></article>
       <article><span class="status-icon slate"><span class="status-dot" data-connection-dot></span></span><div><strong data-connection-text>Checking…</strong><span>Connection</span></div></article>
@@ -131,7 +132,10 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
           <strong><?= suite_e((string) $module['short_name']) ?></strong>
           <span class="module-name"><?= suite_e((string) $module['name']) ?></span>
           <p><?= suite_e((string) $module['description']) ?></p>
-          <span class="module-meta"><span class="mini-dot"></span><?= suite_e((string) $module['offline']) ?></span>
+          <span class="module-footer">
+            <span class="module-meta"><span class="mini-dot"></span><?= suite_e((string) $module['offline']) ?></span>
+            <span class="module-health checking" data-module-health="<?= suite_e((string) $module['key']) ?>"><span></span>Checking</span>
+          </span>
         </a>
       <?php endforeach; ?>
     </section>
