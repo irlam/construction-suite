@@ -143,7 +143,10 @@ $references = suite_reference_client()->fetch($definitions);
           $referenceItems = is_array($referenceState['items'] ?? null) ? $referenceState['items'] : [];
           $referenceConnected = ($referenceState['status'] ?? '') === 'connected';
           $knownValues = array_map(static fn(array $item): string => (string) ($item['value'] ?? ''), $referenceItems);
-          $externalRefKnown = $externalRef === '' || in_array($externalRef, $knownValues, true);
+          $allowAll = !empty($module['summary_allow_all']);
+          $externalRefKnown = $externalRef === ''
+              || ($allowAll && $externalRef === '__all__')
+              || in_array($externalRef, $knownValues, true);
         ?>
           <article class="module-config-card">
             <div class="module-config-head">
@@ -172,6 +175,15 @@ $references = suite_reference_client()->fetch($definitions);
                   <span class="mapping-note">No project/site values exist yet, so the Suite will use all data in this module.</span>
                 <?php else: ?>
                   <span class="mapping-note">Loaded directly from <?= suite_e((string) $module['name']) ?>.</span>
+                <?php endif; ?>
+              <?php elseif ($allowAll): ?>
+                <select name="external_ref[<?= suite_e($key) ?>]">
+                  <option value="__all__" <?= $externalRef === '' || $externalRef === '__all__' ? 'selected' : '' ?>>All data in this module</option>
+                </select>
+                <?php if ($referenceState): ?>
+                  <span class="mapping-note">Project lookup is <?= suite_e(str_replace('_', ' ', (string) ($referenceState['status'] ?? 'unavailable'))) ?>, so the Suite can use the whole module for now.</span>
+                <?php else: ?>
+                  <span class="mapping-note">This module can use all data until project-level mapping is available.</span>
                 <?php endif; ?>
               <?php else: ?>
                 <input type="text" name="external_ref[<?= suite_e($key) ?>]" value="<?= suite_e($externalRef) ?>" placeholder="Optional — mapping lookup is not connected yet">
