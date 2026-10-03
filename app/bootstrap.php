@@ -6,6 +6,7 @@ use Suite\Database\Connection;
 use Suite\Database\Migrator;
 use Suite\Modules\ModuleRegistry;
 use Suite\Modules\ModuleHealth;
+use Suite\Modules\SummaryClient;
 use Suite\Projects\ProjectRepository;
 use Suite\Support\Env;
 
@@ -18,6 +19,7 @@ require_once SUITE_ROOT . '/app/Auth/Auth.php';
 require_once SUITE_ROOT . '/app/Projects/ProjectRepository.php';
 require_once SUITE_ROOT . '/app/Modules/ModuleRegistry.php';
 require_once SUITE_ROOT . '/app/Modules/ModuleHealth.php';
+require_once SUITE_ROOT . '/app/Modules/SummaryClient.php';
 require_once SUITE_ROOT . '/app/Support/Audit.php';
 
 Env::load(SUITE_ROOT . '/.env');
@@ -84,6 +86,12 @@ function suite_module_health(): ModuleHealth
 {
     static $health;
     return $health ??= new ModuleHealth();
+}
+
+function suite_summary_client(): SummaryClient
+{
+    static $client;
+    return $client ??= new SummaryClient();
 }
 
 function suite_e(string $value): string
