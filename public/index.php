@@ -21,6 +21,7 @@ $projectList = $projectsRepo->forUser($user);
 $project = $projectsRepo->currentForUser($user);
 $role = $projectsRepo->roleFor($user, $project);
 $modules = suite_modules()->allForProject($role, $project ? (int) $project['id'] : null);
+$summaryConfigured = suite_summary_client()->configured();
 
 $notificationCount = 0;
 try {
@@ -116,6 +117,33 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
       <article><span class="status-icon amber"><svg><use href="/assets/icons.svg#bell"></use></svg></span><div><strong><?= $notificationCount ?></strong><span>Unread alerts</span></div></article>
       <article><span class="status-icon slate"><span class="status-dot" data-connection-dot></span></span><div><strong data-connection-text>Checking…</strong><span>Connection</span></div></article>
     </section>
+
+    <?php if ($summaryConfigured): ?>
+    <section class="snapshot-shell" aria-label="Live site snapshot">
+      <div class="section-heading compact">
+        <div><p class="eyebrow">LIVE SITE SNAPSHOT</p><h2>What needs attention now</h2></div>
+        <span data-summary-updated>Connecting…</span>
+      </div>
+      <div class="snapshot-grid">
+        <article class="snapshot-card">
+          <span class="snapshot-icon blue"><svg><use href="/assets/icons.svg#defects"></use></svg></span>
+          <div><strong data-summary-module="defects" data-summary-metric="active">—</strong><span>Active defects</span><small data-summary-status="defects">Connecting…</small></div>
+        </article>
+        <article class="snapshot-card">
+          <span class="snapshot-icon purple"><svg><use href="/assets/icons.svg#permit"></use></svg></span>
+          <div><strong data-summary-module="permits" data-summary-metric="pending_approval">—</strong><span>Permits awaiting approval</span><small data-summary-status="permits">Connecting…</small></div>
+        </article>
+        <article class="snapshot-card">
+          <span class="snapshot-icon green"><svg><use href="/assets/icons.svg#shield"></use></svg></span>
+          <div><strong data-summary-module="safety" data-summary-metric="open_actions">—</strong><span>Open safety actions</span><small data-summary-status="safety">Connecting…</small></div>
+        </article>
+        <article class="snapshot-card muted-card">
+          <span class="snapshot-icon orange"><svg><use href="/assets/icons.svg#truck"></use></svg></span>
+          <div><strong>—</strong><span>Deliveries today</span><small>Integration pending</small></div>
+        </article>
+      </div>
+    </section>
+    <?php endif; ?>
 
     <section class="section-heading">
       <div><p class="eyebrow">YOUR SITE TOOLKIT</p><h2><?= suite_e((string) $projectName) ?></h2></div>
