@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 2) . '/app/bootstrap.php';
 
+use Suite\Support\Audit;
+
 $auth = suite_auth();
 $currentUser = $auth->requireUser();
 if (!$auth->isPlatformAdmin($currentUser)) {
@@ -61,6 +63,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         );
                         $stmt->execute([$userId, (int) $project['organization_id'], $projectId, $role]);
                         $pdo->commit();
+                        Audit::record('user.created', (int) $currentUser['id'], (int) $project['organization_id'], $projectId, [
+                            'target_user_id' => $userId,
+                            'email' => $email,
+                            'role' => $role,
+                        ]);
                         $message = 'User created and assigned to the project.';
                     } catch (Throwable $e) {
                         if ($pdo->inTransaction()) $pdo->rollBack();
@@ -79,6 +86,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'UPDATE users SET active = CASE WHEN active = 1 THEN 0 ELSE 1 END WHERE id = ? AND is_platform_admin = 0'
                 );
                 $stmt->execute([$userId]);
+                $state = $pdo->prepare('SELECT active FROM users WHERE id = ?');
+                $state->execute([$userId]);
+                Audit::record('user.status_changed', (int) $currentUser['id'], null, null, [
+                    'target_user_id' => $userId,
+                    'active' => (bool) $state->fetchColumn(),
+                ]);
                 $message = 'User status updated.';
             }
         }
