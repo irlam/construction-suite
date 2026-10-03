@@ -1,4 +1,4 @@
-const CACHE = 'construction-suite-shell-v0.3.3';
+const CACHE = 'construction-suite-shell-v0.3.4';
 const SHELL = [
   '/offline.html',
   '/assets/css/app.css',
