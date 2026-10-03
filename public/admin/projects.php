@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__, 2) . '/app/bootstrap.php';
 
+use Suite\Support\Audit;
+
 $auth = suite_auth();
 $user = $auth->requireUser();
 if (!$auth->isPlatformAdmin($user)) {
@@ -38,6 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $stmt = $pdo->prepare('INSERT INTO organizations (name, slug, active) VALUES (?, ?, 1)');
                 $stmt->execute([$name, $candidate]);
+                $organisationId = (int) $pdo->lastInsertId();
+                Audit::record('organisation.created', (int) $user['id'], $organisationId, null, ['name' => $name]);
                 $message = 'Organisation added.';
             }
         }
@@ -66,6 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $code !== '' ? $code : null,
                     $location !== '' ? $location : null,
                 ]);
+                $projectId = (int) $pdo->lastInsertId();
+                Audit::record('project.created', (int) $user['id'], $organizationId, $projectId, ['name' => $name]);
                 $message = 'Project added.';
             }
         }
@@ -76,6 +82,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'UPDATE projects SET active = CASE WHEN active = 1 THEN 0 ELSE 1 END WHERE id = ?'
             );
             $stmt->execute([$projectId]);
+            $lookup = $pdo->prepare('SELECT organization_id, active FROM projects WHERE id = ?');
+            $lookup->execute([$projectId]);
+            $changedProject = $lookup->fetch();
+            if ($changedProject) {
+                Audit::record('project.status_changed', (int) $user['id'], (int) $changedProject['organization_id'], $projectId, ['active' => (bool) $changedProject['active']]);
+            }
             $message = 'Project status updated.';
         }
     }
