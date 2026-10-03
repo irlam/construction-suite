@@ -56,6 +56,18 @@ Initial module cards:
 - [x] per-project module enable/disable controls
 - [x] external project reference field for future module integrations
 
+## Hub V0.3 — Read-only production summaries
+
+- [x] secure server-to-server integration key model
+- [x] Defect Tracker summary endpoint
+- [x] Permits summary endpoint
+- [x] Safety summary endpoint
+- [x] Hub dashboard summary client
+- [x] live site snapshot UI
+- [ ] Deliveries summary endpoint
+- [ ] project/reference discovery pickers
+- [ ] Handover and Programme summaries
+
 ## Phase 2 — Shared Identity
 
 - [ ] signed module hand-off
