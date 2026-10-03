@@ -42,12 +42,18 @@ final class SummaryClient
             }
 
             $externalRef = trim((string) ($module['external_project_ref'] ?? ''));
-            if (($module['summary_requires_ref'] ?? false) && $externalRef === '') {
+            $allowAll = (bool) ($module['summary_allow_all'] ?? false);
+
+            if (($module['summary_requires_ref'] ?? false) && $externalRef === '' && !$allowAll) {
                 $results[$moduleKey] = [
                     'status' => 'needs_mapping',
                     'metrics' => [],
                 ];
                 continue;
+            }
+
+            if ($externalRef === '__all__') {
+                $externalRef = '';
             }
 
             $param = trim((string) ($module['summary_param'] ?? ''));
