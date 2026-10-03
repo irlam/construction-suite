@@ -37,7 +37,7 @@ echo json_encode([
                 'url' => (string) $module['url'],
                 'offline' => (string) $module['offline'],
             ],
-            suite_modules()->all($role)
+            suite_modules()->allForProject($role, $project ? (int) $project['id'] : null)
         ),
     ],
 ], JSON_UNESCAPED_SLASHES);
