@@ -163,8 +163,20 @@
   });
 
   if ('serviceWorker' in navigator && window.isSecureContext) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+    window.addEventListener('load', async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('/service-worker.js', {
+          updateViaCache: 'none'
+        });
+        await registration.update();
+      } catch (_) {}
+    });
+
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      const key = 'suite-sw-refresh-v0.3.1';
+      if (sessionStorage.getItem(key)) return;
+      sessionStorage.setItem(key, '1');
+      window.location.reload();
     });
   }
 
