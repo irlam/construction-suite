@@ -8,6 +8,6 @@ return [
     'environment' => Env::get('APP_ENV', 'production'),
     'url' => rtrim((string) Env::get('APP_URL', ''), '/'),
     'timezone' => Env::get('APP_TIMEZONE', 'Europe/London'),
-    'version' => '0.2.0',
+    'version' => '0.2.1',
     'modules' => require __DIR__ . '/modules.php',
 ];
