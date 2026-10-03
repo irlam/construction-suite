@@ -52,6 +52,9 @@ Initial module cards:
 - [x] platform audit activity
 - [x] asynchronous live module availability
 - [x] authenticated module-health API
+- [x] versioned database migration framework
+- [x] per-project module enable/disable controls
+- [x] external project reference field for future module integrations
 
 ## Phase 2 — Shared Identity
 
@@ -87,7 +90,7 @@ Initial module cards:
 
 - [ ] tenant onboarding
 - [ ] organisation branding
-- [ ] module entitlements
+- [x] module entitlements
 - [ ] subscription/licensing model
 - [ ] storage quotas
 - [ ] backups/restore
