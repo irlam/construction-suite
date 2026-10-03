@@ -15,7 +15,7 @@ if (!$user) {
 
 $project = suite_projects()->currentForUser($user);
 $role = suite_projects()->roleFor($user, $project);
-$modules = suite_modules()->all($role);
+$modules = suite_modules()->allForProject($role, $project ? (int) $project['id'] : null);
 
 $health = suite_module_health()->checkMany($modules);
 $available = count(array_filter($health, static fn(array $item): bool => $item['status'] === 'available'));
