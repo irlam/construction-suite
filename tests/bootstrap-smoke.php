@@ -14,6 +14,7 @@ $check(class_exists(\Suite\Modules\ModuleHealth::class), 'Module health service 
 $check(class_exists(\Suite\Support\Audit::class), 'Audit service is not wired.');
 $check(class_exists(\Suite\Database\Migrator::class), 'Database migrator is not wired.');
 $check(class_exists(\Suite\Modules\SummaryClient::class), 'Dashboard summary client is not wired.');
+$check(class_exists(\Suite\Modules\ReferenceClient::class), 'Project reference discovery client is not wired.');
 $check(is_file(SUITE_ROOT . '/database/migrations/001_project_modules.mysql.sql'), 'MySQL project_modules migration is missing.');
 $check(is_file(SUITE_ROOT . '/database/migrations/001_project_modules.sqlite.sql'), 'SQLite project_modules migration is missing.');
 
