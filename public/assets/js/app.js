@@ -29,6 +29,52 @@
     }));
   }
 
+  async function updateModuleHealth() {
+    const summary = document.querySelector('[data-module-health-summary]');
+    const badges = document.querySelectorAll('[data-module-health]');
+    if (!summary && badges.length === 0) return;
+
+    if (!navigator.onLine) {
+      if (summary) summary.textContent = 'Offline';
+      badges.forEach(badge => {
+        badge.className = 'module-health unknown';
+        badge.innerHTML = '<span></span>Not checked';
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/v1/module-health.php', {
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' },
+        cache: 'no-store'
+      });
+      if (!response.ok) throw new Error('health request failed');
+      const payload = await response.json();
+      const modules = new Map((payload.modules || []).map(item => [item.key, item]));
+
+      badges.forEach(badge => {
+        const item = modules.get(badge.dataset.moduleHealth);
+        const available = item && item.status === 'available';
+        badge.className = 'module-health ' + (available ? 'available' : 'unavailable');
+        badge.innerHTML = '<span></span>' + (available ? 'Available' : 'Unavailable');
+        if (item && item.latency_ms !== null) {
+          badge.title = String(item.http_code || '') + ' · ' + String(item.latency_ms) + ' ms';
+        }
+      });
+
+      if (summary && payload.summary) {
+        summary.textContent = String(payload.summary.available) + '/' + String(payload.summary.total) + ' available';
+      }
+    } catch (_) {
+      if (summary) summary.textContent = 'Check unavailable';
+      badges.forEach(badge => {
+        badge.className = 'module-health unknown';
+        badge.innerHTML = '<span></span>Unknown';
+      });
+    }
+  }
+
   function updateQueueStatus() {
     const queued = Number(localStorage.getItem('suiteQueued')) || 0;
     syncLabels.forEach(label => {
@@ -41,10 +87,11 @@
     setQueued(count) {
       localStorage.setItem('suiteQueued', String(Math.max(0, Number(count) || 0)));
       updateQueueStatus();
+      updateModuleHealth();
     }
   };
 
-  window.addEventListener('online', () => { updateConnection(); updateQueueStatus(); });
+  window.addEventListener('online', () => { updateConnection(); updateQueueStatus(); updateModuleHealth(); });
   window.addEventListener('offline', () => { updateConnection(); updateQueueStatus(); });
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
@@ -89,4 +136,5 @@
   saveContext();
   updateConnection();
   updateQueueStatus();
+  updateModuleHealth();
 })();
