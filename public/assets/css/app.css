@@ -147,7 +147,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;bac
 .module-config-head{display:flex;align-items:center;justify-content:space-between;gap:1rem}.module-config-head .module-icon{margin:0}
 .switch-label{display:flex;align-items:center;gap:.45rem;font-size:.78rem;font-weight:750;color:#344054}.switch-label input{accent-color:#111827}
 .module-ref-label{display:grid;gap:.35rem;margin-top:.35rem;font-size:.76rem;font-weight:750;color:#475467}
-.module-ref-label input{width:100%;border:1px solid #d0d5dd;border-radius:11px;padding:.7rem .75rem;outline:none}.module-ref-label input:focus{border-color:#7ba2f8;box-shadow:0 0 0 4px rgba(47,111,237,.1)}
+.module-ref-label input,.module-ref-label select{width:100%;border:1px solid #d0d5dd;border-radius:11px;padding:.7rem .75rem;outline:none}.module-ref-label input:focus,.module-ref-label select:focus{border-color:#7ba2f8;box-shadow:0 0 0 4px rgba(47,111,237,.1)}
 .sticky-save{position:sticky;bottom:1rem;z-index:20;background:rgba(17,24,39,.96);backdrop-filter:blur(16px);color:white;border-radius:18px;padding:.9rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;box-shadow:0 18px 50px rgba(16,24,40,.2)}
 .sticky-save div{display:grid}.sticky-save span{font-size:.76rem;color:#cbd5e1;margin-top:.15rem}
 @media(max-width:720px){.module-config-grid{grid-template-columns:1fr}.sticky-save{bottom:4.5rem;align-items:stretch;flex-direction:column}.sticky-save .button{width:100%}}
@@ -160,3 +160,6 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;bac
 .snapshot-card.muted-card{background:rgba(255,255,255,.55)}
 @media(max-width:900px){.snapshot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.snapshot-grid{grid-template-columns:1fr 1fr}.snapshot-card{padding:.8rem}.snapshot-icon{width:38px;height:38px}.snapshot-card strong{font-size:1.25rem}}
+
+.mapping-note,.mapping-warning{display:block;font-size:.7rem;line-height:1.4;margin-top:.15rem;font-weight:600}
+.mapping-note{color:#667085}.mapping-warning{color:#b54708}
