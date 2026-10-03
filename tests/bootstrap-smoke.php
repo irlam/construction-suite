@@ -12,6 +12,9 @@ $modules = suite_modules()->all('platform_admin');
 $check(count($modules) === 8, 'Expected eight initial Suite modules.');
 $check(class_exists(\Suite\Modules\ModuleHealth::class), 'Module health service is not wired.');
 $check(class_exists(\Suite\Support\Audit::class), 'Audit service is not wired.');
+$check(class_exists(\Suite\Database\Migrator::class), 'Database migrator is not wired.');
+$check(is_file(SUITE_ROOT . '/database/migrations/001_project_modules.mysql.sql'), 'MySQL project_modules migration is missing.');
+$check(is_file(SUITE_ROOT . '/database/migrations/001_project_modules.sqlite.sql'), 'SQLite project_modules migration is missing.');
 
 foreach ($modules as $module) {
     $check(isset($module['key'], $module['name'], $module['url']), 'Module registry entry is incomplete.');
@@ -36,6 +39,8 @@ foreach ([
     'public/admin/project-edit.php',
     'public/admin/user-edit.php',
     'public/admin/audit.php',
+    'public/admin/system.php',
+    'public/admin/modules.php',
 ] as $required) {
     $check(is_file(SUITE_ROOT . '/' . $required), 'Missing required Hub file: ' . $required);
 }
