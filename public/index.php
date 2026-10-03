@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'selec
 $projectList = $projectsRepo->forUser($user);
 $project = $projectsRepo->currentForUser($user);
 $role = $projectsRepo->roleFor($user, $project);
-$modules = suite_modules()->all($role);
+$modules = suite_modules()->allForProject($role, $project ? (int) $project['id'] : null);
 
 $notificationCount = 0;
 try {
