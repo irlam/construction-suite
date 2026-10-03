@@ -44,6 +44,8 @@ try {
   <section class="admin-shortcuts">
     <a class="admin-shortcut" href="/admin/projects.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#site"></use></svg></span><div><strong>Organisations & projects</strong><span>Create sites and control active projects</span></div></a>
     <a class="admin-shortcut" href="/admin/users.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#settings"></use></svg></span><div><strong>Users & access</strong><span>Create accounts and assign project roles</span></div></a>
+    <a class="admin-shortcut" href="/admin/modules.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#grid"></use></svg></span><div><strong>Project modules</strong><span>Choose which tools each site can use</span></div></a>
+    <a class="admin-shortcut" href="/admin/system.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#sync"></use></svg></span><div><strong>System & updates</strong><span>Health checks and database migrations</span></div></a>
     <a class="admin-shortcut" href="/admin/audit.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#pulse"></use></svg></span><div><strong>Audit activity</strong><span>Review recent administrative changes</span></div></a>
     <a class="admin-shortcut" href="/profile.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#check"></use></svg></span><div><strong>My profile</strong><span>Update your name, email and password</span></div></a>
   </section>
@@ -60,8 +62,8 @@ try {
     </div>
   </section>
   <section class="admin-panel">
-    <div class="section-heading compact"><div><p class="eyebrow">NEXT CONTROL LAYER</p><h2>Coming through Hub V1</h2></div></div>
-    <p class="muted">Organisation management, project creation, users, memberships, module entitlements and audit activity will be added here without changing the existing live apps.</p>
+    <div class="section-heading compact"><div><p class="eyebrow">PLATFORM DIRECTION</p><h2>Shared Suite layer</h2></div></div>
+    <p class="muted">The Hub now owns organisations, projects, users, roles, module entitlements, availability checks and audit activity. The next integration step is shared project identity and read-only dashboard summaries from the live modules.</p>
   </section>
 </main>
 <script src="/assets/js/app.js" defer></script>
