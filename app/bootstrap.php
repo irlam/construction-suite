@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use Suite\Auth\Auth;
 use Suite\Database\Connection;
+use Suite\Database\Migrator;
 use Suite\Modules\ModuleRegistry;
 use Suite\Modules\ModuleHealth;
 use Suite\Projects\ProjectRepository;
@@ -12,6 +13,7 @@ define('SUITE_ROOT', dirname(__DIR__));
 
 require_once SUITE_ROOT . '/app/Support/Env.php';
 require_once SUITE_ROOT . '/app/Database/Connection.php';
+require_once SUITE_ROOT . '/app/Database/Migrator.php';
 require_once SUITE_ROOT . '/app/Auth/Auth.php';
 require_once SUITE_ROOT . '/app/Projects/ProjectRepository.php';
 require_once SUITE_ROOT . '/app/Modules/ModuleRegistry.php';
@@ -52,6 +54,12 @@ function suite_config(?string $key = null, mixed $default = null): mixed
 function suite_db(): PDO
 {
     return Connection::pdo();
+}
+
+function suite_migrator(): Migrator
+{
+    static $migrator;
+    return $migrator ??= new Migrator(Connection::pdo(), SUITE_ROOT);
 }
 
 function suite_auth(): Auth
