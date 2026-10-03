@@ -44,13 +44,22 @@ Initial module cards:
 - [x] Status
 - [x] Deliveries
 
+## Hub V0.2 — Control centre
+
+- [x] edit organisations and projects
+- [x] edit user profiles and passwords
+- [x] manage user project memberships and roles
+- [x] platform audit activity
+- [x] asynchronous live module availability
+- [x] authenticated module-health API
+
 ## Phase 2 — Shared Identity
 
 - [ ] signed module hand-off
 - [ ] common current-user endpoint
 - [ ] common project/site context
 - [ ] common role/permission vocabulary
-- [ ] central audit events
+- [x] central audit events
 - [ ] remove duplicate logins module-by-module
 
 ## Phase 3 — Shared Offline Platform
