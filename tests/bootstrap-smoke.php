@@ -18,7 +18,11 @@ $check(class_exists(\Suite\Modules\ReferenceClient::class), 'Project reference d
 $check(is_file(SUITE_ROOT . '/database/migrations/001_project_modules.mysql.sql'), 'MySQL project_modules migration is missing.');
 $check(is_file(SUITE_ROOT . '/database/migrations/001_project_modules.sqlite.sql'), 'SQLite project_modules migration is missing.');
 
+$integratedKeys = ['defects', 'permits', 'safety'];
 foreach ($modules as $module) {
+    if (in_array((string) ($module['key'] ?? ''), $integratedKeys, true)) {
+        $check(($module['summary_allow_all'] ?? false) === true, 'Integrated module must allow all-data fallback.');
+    }
     $check(isset($module['key'], $module['name'], $module['url']), 'Module registry entry is incomplete.');
     $check(str_starts_with((string) $module['url'], 'https://'), 'Module URLs must use HTTPS.');
 }
