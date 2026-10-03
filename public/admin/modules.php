@@ -155,7 +155,11 @@ $references = suite_reference_client()->fetch($definitions);
             <label class="module-ref-label">External project reference
               <?php if ($referenceConnected): ?>
                 <select name="external_ref[<?= suite_e($key) ?>]">
-                  <option value=""><?= $referenceItems ? 'Choose the matching project/site' : 'No project/site values found yet' ?></option>
+                  <?php if (!empty($module['summary_allow_all'])): ?>
+                    <option value="__all__" <?= $externalRef === '' || $externalRef === '__all__' ? 'selected' : '' ?>>All data in this module</option>
+                  <?php else: ?>
+                    <option value=""><?= $referenceItems ? 'Choose the matching project/site' : 'No project/site values found yet' ?></option>
+                  <?php endif; ?>
                   <?php foreach ($referenceItems as $item): ?>
                     <option value="<?= suite_e((string) $item['value']) ?>" <?= $externalRefKnown && $externalRef === (string) $item['value'] ? 'selected' : '' ?>>
                       <?= suite_e((string) $item['label']) ?>
@@ -165,7 +169,7 @@ $references = suite_reference_client()->fetch($definitions);
                 <?php if ($externalRef !== '' && !$externalRefKnown): ?>
                   <span class="mapping-warning">The current value “<?= suite_e($externalRef) ?>” is not a real value from this module. Choose the correct one above.</span>
                 <?php elseif (!$referenceItems): ?>
-                  <span class="mapping-note">No values exist in this module yet. You can leave this unmapped for now.</span>
+                  <span class="mapping-note">No project/site values exist yet, so the Suite will use all data in this module.</span>
                 <?php else: ?>
                   <span class="mapping-note">Loaded directly from <?= suite_e((string) $module['name']) ?>.</span>
                 <?php endif; ?>
