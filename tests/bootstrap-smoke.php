@@ -13,6 +13,7 @@ $check(count($modules) === 8, 'Expected eight initial Suite modules.');
 $check(class_exists(\Suite\Modules\ModuleHealth::class), 'Module health service is not wired.');
 $check(class_exists(\Suite\Support\Audit::class), 'Audit service is not wired.');
 $check(class_exists(\Suite\Database\Migrator::class), 'Database migrator is not wired.');
+$check(class_exists(\Suite\Modules\SummaryClient::class), 'Dashboard summary client is not wired.');
 $check(is_file(SUITE_ROOT . '/database/migrations/001_project_modules.mysql.sql'), 'MySQL project_modules migration is missing.');
 $check(is_file(SUITE_ROOT . '/database/migrations/001_project_modules.sqlite.sql'), 'SQLite project_modules migration is missing.');
 
@@ -35,6 +36,7 @@ foreach ([
     'public/assets/js/app.js',
     'public/profile.php',
     'public/api/v1/module-health.php',
+    'public/api/v1/dashboard-summary.php',
     'public/admin/organisation-edit.php',
     'public/admin/project-edit.php',
     'public/admin/user-edit.php',
