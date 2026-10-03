@@ -54,6 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $error === null) {
                 }
             }
 
+            suite_migrator()->migrateAll();
+
             $slug = strtolower(trim((string) preg_replace('/[^a-z0-9]+/i', '-', $organization), '-'));
             $pdo->beginTransaction();
 
