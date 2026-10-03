@@ -99,6 +99,7 @@ if ($ready && $project) {
     }
 }
 $definitions = suite_modules()->definitions();
+$references = suite_reference_client()->fetch($definitions);
 ?>
 <!doctype html>
 <html lang="en">
@@ -138,6 +139,11 @@ $definitions = suite_modules()->definitions();
           $setting = $settings[$key] ?? null;
           $enabledNow = $setting ? (bool) $setting['enabled'] : (bool) ($module['enabled'] ?? true);
           $externalRef = (string) ($setting['external_project_ref'] ?? '');
+          $referenceState = $references[$key] ?? null;
+          $referenceItems = is_array($referenceState['items'] ?? null) ? $referenceState['items'] : [];
+          $referenceConnected = ($referenceState['status'] ?? '') === 'connected';
+          $knownValues = array_map(static fn(array $item): string => (string) ($item['value'] ?? ''), $referenceItems);
+          $externalRefKnown = $externalRef === '' || in_array($externalRef, $knownValues, true);
         ?>
           <article class="module-config-card">
             <div class="module-config-head">
@@ -147,7 +153,28 @@ $definitions = suite_modules()->definitions();
             <strong><?= suite_e((string) $module['name']) ?></strong>
             <p><?= suite_e((string) $module['description']) ?></p>
             <label class="module-ref-label">External project reference
-              <input type="text" name="external_ref[<?= suite_e($key) ?>]" value="<?= suite_e($externalRef) ?>" placeholder="Optional — used when this module is integrated">
+              <?php if ($referenceConnected): ?>
+                <select name="external_ref[<?= suite_e($key) ?>]">
+                  <option value=""><?= $referenceItems ? 'Choose the matching project/site' : 'No project/site values found yet' ?></option>
+                  <?php foreach ($referenceItems as $item): ?>
+                    <option value="<?= suite_e((string) $item['value']) ?>" <?= $externalRefKnown && $externalRef === (string) $item['value'] ? 'selected' : '' ?>>
+                      <?= suite_e((string) $item['label']) ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
+                <?php if ($externalRef !== '' && !$externalRefKnown): ?>
+                  <span class="mapping-warning">The current value “<?= suite_e($externalRef) ?>” is not a real value from this module. Choose the correct one above.</span>
+                <?php elseif (!$referenceItems): ?>
+                  <span class="mapping-note">No values exist in this module yet. You can leave this unmapped for now.</span>
+                <?php else: ?>
+                  <span class="mapping-note">Loaded directly from <?= suite_e((string) $module['name']) ?>.</span>
+                <?php endif; ?>
+              <?php else: ?>
+                <input type="text" name="external_ref[<?= suite_e($key) ?>]" value="<?= suite_e($externalRef) ?>" placeholder="Optional — mapping lookup is not connected yet">
+                <?php if ($referenceState): ?>
+                  <span class="mapping-warning">Automatic lookup is <?= suite_e(str_replace('_', ' ', (string) ($referenceState['status'] ?? 'unavailable'))) ?>.</span>
+                <?php endif; ?>
+              <?php endif; ?>
             </label>
             <small><?= suite_e((string) $module['url']) ?></small>
           </article>
