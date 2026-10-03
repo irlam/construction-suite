@@ -44,6 +44,8 @@ try {
   <section class="admin-shortcuts">
     <a class="admin-shortcut" href="/admin/projects.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#site"></use></svg></span><div><strong>Organisations & projects</strong><span>Create sites and control active projects</span></div></a>
     <a class="admin-shortcut" href="/admin/users.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#settings"></use></svg></span><div><strong>Users & access</strong><span>Create accounts and assign project roles</span></div></a>
+    <a class="admin-shortcut" href="/admin/audit.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#pulse"></use></svg></span><div><strong>Audit activity</strong><span>Review recent administrative changes</span></div></a>
+    <a class="admin-shortcut" href="/profile.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#check"></use></svg></span><div><strong>My profile</strong><span>Update your name, email and password</span></div></a>
   </section>
   <section class="admin-panel">
     <div class="section-heading compact"><div><p class="eyebrow">MODULE REGISTRY</p><h2>Connected applications</h2></div></div>
