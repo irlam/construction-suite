@@ -41,6 +41,7 @@ $health = [
     'database' => false,
     'curl' => function_exists('curl_multi_init'),
     'https' => (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off'),
+    'integrations' => suite_summary_client()->configured(),
 ];
 try {
     suite_db()->query('SELECT 1');
@@ -64,6 +65,15 @@ try {
     <article><strong><?= $health['https'] ? 'HTTPS' : 'HTTP' ?></strong><span>Connection security</span></article>
     <article><strong><?= $health['curl'] ? 'Ready' : 'Missing' ?></strong><span>Module health checks</span></article>
     <article><strong><?= count($pending) ?></strong><span>Pending DB updates</span></article>
+  </section>
+
+  <section class="admin-panel">
+    <div class="section-heading compact"><div><p class="eyebrow">INTEGRATIONS</p><h2>Live dashboard data</h2></div><span class="role-pill"><?= $health['integrations'] ? 'Hub key configured' : 'Not configured' ?></span></div>
+    <?php if ($health['integrations']): ?>
+      <div class="notice success"><strong>Hub integration key is configured.</strong><br>Configure the same private key in each production module and map its external project reference under Project modules.</div>
+    <?php else: ?>
+      <div class="notice warning"><strong>Live module summaries are not enabled yet.</strong><br>Add <code>SUITE_INTEGRATION_KEY</code> to the private Suite <code>.env</code>. The dashboard remains fully usable without it.</div>
+    <?php endif; ?>
   </section>
 
   <section class="admin-panel">
