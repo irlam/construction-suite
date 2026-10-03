@@ -26,6 +26,9 @@ final class ReferenceClient
         foreach ($modules as $module) {
             $moduleKey = (string) ($module['key'] ?? '');
             $url = (string) ($module['reference_url'] ?? '');
+            if ($url === '' && !empty($module['summary_url'])) {
+                $url = str_replace('suite-summary.php', 'suite-references.php', (string) $module['summary_url']);
+            }
             if ($moduleKey === '' || $url === '' || !str_starts_with($url, 'https://')) {
                 continue;
             }
