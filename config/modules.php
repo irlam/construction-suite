@@ -38,6 +38,7 @@ return [
         'url' => 'https://safety.defecttracker.uk',
         'health_url' => 'https://safety.defecttracker.uk/health.php?format=json',
         'summary_url' => 'https://safety.defecttracker.uk/api/suite-summary.php',
+        'reference_url' => 'https://safety.defecttracker.uk/api/suite-references.php',
         'summary_param' => 'site',
         'summary_requires_ref' => true,
         'icon' => 'shield',
