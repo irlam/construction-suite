@@ -7,6 +7,7 @@ use Suite\Database\Migrator;
 use Suite\Modules\ModuleRegistry;
 use Suite\Modules\ModuleHealth;
 use Suite\Modules\SummaryClient;
+use Suite\Modules\ReferenceClient;
 use Suite\Projects\ProjectRepository;
 use Suite\Support\Env;
 
@@ -20,6 +21,7 @@ require_once SUITE_ROOT . '/app/Projects/ProjectRepository.php';
 require_once SUITE_ROOT . '/app/Modules/ModuleRegistry.php';
 require_once SUITE_ROOT . '/app/Modules/ModuleHealth.php';
 require_once SUITE_ROOT . '/app/Modules/SummaryClient.php';
+require_once SUITE_ROOT . '/app/Modules/ReferenceClient.php';
 require_once SUITE_ROOT . '/app/Support/Audit.php';
 
 Env::load(SUITE_ROOT . '/.env');
@@ -92,6 +94,12 @@ function suite_summary_client(): SummaryClient
 {
     static $client;
     return $client ??= new SummaryClient();
+}
+
+function suite_reference_client(): ReferenceClient
+{
+    static $client;
+    return $client ??= new ReferenceClient();
 }
 
 function suite_e(string $value): string
