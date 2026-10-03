@@ -9,6 +9,7 @@ return [
         'url' => 'https://mcgoff.defecttracker.uk',
         'health_url' => 'https://mcgoff.defecttracker.uk/health.php',
         'summary_url' => 'https://mcgoff.defecttracker.uk/api/suite-summary.php',
+        'reference_url' => 'https://mcgoff.defecttracker.uk/api/suite-references.php',
         'summary_param' => 'project',
         'summary_requires_ref' => true,
         'icon' => 'defects',
