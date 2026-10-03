@@ -116,3 +116,12 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;bac
 .admin-shortcut:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
 .admin-shortcut div{display:grid}.admin-shortcut span{font-size:.78rem;color:#667085;margin-top:.18rem}
 @media(max-width:720px){.admin-two-col,.admin-form-grid,.admin-shortcuts{grid-template-columns:1fr}.admin-row-actions{grid-template-columns:auto 1fr}.admin-row-actions>.role-pill,.admin-row-actions>form,.admin-row-actions>.muted{grid-column:2}.form-action{display:block}.form-action .button{width:100%}}
+
+.module-footer{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:.55rem;flex-wrap:wrap}
+.module-footer .module-meta{margin-top:0}
+.module-health{display:inline-flex;align-items:center;gap:.36rem;font-size:.7rem;font-weight:750;color:#667085;white-space:nowrap}
+.module-health>span{width:7px;height:7px;border-radius:50%;background:#98a2b3;box-shadow:0 0 0 3px rgba(152,162,179,.1)}
+.module-health.available{color:#067647}.module-health.available>span{background:#12b76a;box-shadow:0 0 0 3px rgba(18,183,106,.12)}
+.module-health.unavailable{color:#b42318}.module-health.unavailable>span{background:#f04438;box-shadow:0 0 0 3px rgba(240,68,56,.12)}
+.module-health.checking>span{animation:healthPulse 1s ease-in-out infinite}
+@keyframes healthPulse{0%,100%{opacity:.35}50%{opacity:1}}
