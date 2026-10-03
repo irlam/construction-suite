@@ -143,16 +143,30 @@ $projects = $pdo->query(
   </div>
 
   <section class="admin-panel">
+    <div class="section-heading compact"><div><p class="eyebrow">ORGANISATIONS</p><h2><?= count($organisations) ?> organisations</h2></div></div>
+    <div class="admin-table">
+      <?php foreach ($organisations as $org): ?>
+        <a class="admin-row admin-row-link" href="/admin/organisation-edit.php?id=<?= (int) $org['id'] ?>">
+          <span class="module-icon tiny"><svg><use href="/assets/icons.svg#site"></use></svg></span>
+          <div><strong><?= suite_e((string) $org['name']) ?></strong><span><?= suite_e((string) $org['slug']) ?></span></div>
+          <span class="role-pill"><?= (bool) $org['active'] ? 'Active' : 'Inactive' ?></span>
+        </a>
+      <?php endforeach; ?>
+    </div>
+  </section>
+
+  <section class="admin-panel">
     <div class="section-heading compact"><div><p class="eyebrow">PROJECT REGISTER</p><h2><?= count($projects) ?> projects</h2></div></div>
     <div class="admin-table">
       <?php foreach ($projects as $project): ?>
-        <div class="admin-row admin-row-actions">
+        <div class="admin-row admin-row-actions admin-row-five">
           <span class="module-icon tiny"><svg><use href="/assets/icons.svg#site"></use></svg></span>
           <div>
             <strong><?= suite_e((string) $project['name']) ?></strong>
             <span><?= suite_e((string) $project['organization_name']) ?><?= $project['location'] ? ' · ' . suite_e((string) $project['location']) : '' ?></span>
           </div>
           <span class="role-pill"><?= (bool) $project['active'] ? 'Active' : 'Inactive' ?></span>
+          <a class="button small secondary" href="/admin/project-edit.php?id=<?= (int) $project['id'] ?>">Edit</a>
           <form method="post">
             <input type="hidden" name="csrf_token" value="<?= suite_e($auth->csrfToken()) ?>">
             <input type="hidden" name="action" value="toggle_project">
