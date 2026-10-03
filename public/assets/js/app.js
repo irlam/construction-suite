@@ -75,6 +75,66 @@
     }
   }
 
+  async function updateDashboardSummary() {
+    const metricNodes = document.querySelectorAll('[data-summary-module][data-summary-metric]');
+    if (metricNodes.length === 0) return;
+
+    const statusNodes = document.querySelectorAll('[data-summary-status]');
+    const updatedNode = document.querySelector('[data-summary-updated]');
+
+    if (!navigator.onLine) {
+      statusNodes.forEach(node => node.textContent = 'Offline');
+      if (updatedNode) updatedNode.textContent = 'Offline';
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/v1/dashboard-summary.php', {
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' },
+        cache: 'no-store'
+      });
+      if (!response.ok) throw new Error('summary request failed');
+      const payload = await response.json();
+      const modules = payload.modules || {};
+
+      metricNodes.forEach(node => {
+        const moduleKey = node.dataset.summaryModule;
+        const metricKey = node.dataset.summaryMetric;
+        const result = modules[moduleKey];
+
+        if (result && result.status === 'connected' && result.metrics && metricKey in result.metrics) {
+          node.textContent = String(result.metrics[metricKey]);
+        } else {
+          node.textContent = '—';
+        }
+      });
+
+      statusNodes.forEach(node => {
+        const result = modules[node.dataset.summaryStatus];
+        if (!result) {
+          node.textContent = 'Not connected';
+          return;
+        }
+        const labels = {
+          connected: 'Live data',
+          needs_mapping: 'Map this project',
+          unauthorized: 'Check integration key',
+          not_configured: 'Enable module integration',
+          unavailable: 'Temporarily unavailable'
+        };
+        node.textContent = labels[result.status] || 'Not connected';
+      });
+
+      if (updatedNode) {
+        updatedNode.textContent = 'Updated just now';
+      }
+    } catch (_) {
+      statusNodes.forEach(node => node.textContent = 'Summary unavailable');
+      if (updatedNode) updatedNode.textContent = 'Unable to refresh';
+    }
+  }
+
   function updateQueueStatus() {
     const queued = Number(localStorage.getItem('suiteQueued')) || 0;
     syncLabels.forEach(label => {
@@ -91,12 +151,14 @@
     }
   };
 
-  window.addEventListener('online', () => { updateConnection(); updateQueueStatus(); updateModuleHealth(); });
+  window.addEventListener('online', () => { updateConnection(); updateQueueStatus(); updateModuleHealth(); updateDashboardSummary(); });
   window.addEventListener('offline', () => { updateConnection(); updateQueueStatus(); });
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
       updateConnection();
       updateQueueStatus();
+      updateModuleHealth();
+      updateDashboardSummary();
     }
   });
 
@@ -137,4 +199,5 @@
   updateConnection();
   updateQueueStatus();
   updateModuleHealth();
+  updateDashboardSummary();
 })();
