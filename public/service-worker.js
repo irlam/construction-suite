@@ -1,4 +1,4 @@
-const CACHE = 'construction-suite-shell-v0.2.1';
+const CACHE = 'construction-suite-shell-v0.3.0';
 const SHELL = ['/offline.html','/assets/css/app.css','/assets/js/app.js','/assets/icons.svg','/assets/brand/logo.svg','/assets/brand/favicon.svg','/manifest.webmanifest'];
 
 self.addEventListener('install', event => {
