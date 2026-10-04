@@ -137,9 +137,9 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
           <span class="snapshot-icon green"><svg><use href="/assets/icons.svg#shield"></use></svg></span>
           <div><strong data-summary-module="safety" data-summary-metric="open_actions">—</strong><span>Open safety actions</span><small data-summary-status="safety">Connecting…</small></div>
         </article>
-        <article class="snapshot-card muted-card">
+        <article class="snapshot-card">
           <span class="snapshot-icon orange"><svg><use href="/assets/icons.svg#truck"></use></svg></span>
-          <div><strong>—</strong><span>Deliveries today</span><small>Integration pending</small></div>
+          <div><strong data-summary-module="deliveries" data-summary-metric="today">—</strong><span>Deliveries today</span><small data-summary-status="deliveries">Connecting…</small></div>
         </article>
       </div>
     </section>
