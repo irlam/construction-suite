@@ -1,5 +1,6 @@
 
 <?php
+
 return [
     'defects' => [
         'name' => 'Defect Tracker',
