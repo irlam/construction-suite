@@ -24,6 +24,8 @@ return [
         'short_name' => 'Deliveries',
         'description' => 'Coordinate delivery bookings, logistics slots and gate activity.',
         'url' => 'https://sitedeliveries.site',
+        'summary_url' => 'https://sitedeliveries.site/api/suite-summary.php',
+        'summary_allow_all' => true,
         'icon' => 'truck',
         'accent' => 'orange',
         'offline' => 'Online module',
