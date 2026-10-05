@@ -1,0 +1,79 @@
+name: Cross-product regression audit
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '17 4 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  modules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: irlam/site-deliveries
+          path: delivery-source
+      - uses: actions/checkout@v4
+        with:
+          repository: irlam/cleanup-notices
+          path: notices-source
+      - uses: actions/checkout@v4
+        with:
+          repository: irlam/safety-tracker
+          path: safety-source
+      - uses: actions/checkout@v4
+        with:
+          repository: irlam/defect-tracker
+          path: defects-source
+      - uses: actions/checkout@v4
+        with:
+          repository: irlam/permits
+          path: permits-source
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_mysql, pdo_sqlite, mbstring, fileinfo, gd, curl
+      - name: Suite syntax and permissions
+        run: |
+          php tests/bootstrap-smoke.php
+          php tests/project-scope.php
+          php tests/notifications.php
+      - name: Delivery booking API contracts
+        run: |
+          php -l delivery-source/api/suite-summary.php
+          php delivery-source/tests/suite-integration.php
+      - name: Safety Tours recovery and source contracts
+        run: |
+          php -l safety-source/actions.php
+          php -l safety-source/api/suite-summary.php
+          php safety-source/tests/suite-integration.php
+      - name: Permit approval entry point syntax
+        run: |
+          php -l permits-source/manager-approvals.php
+          php -l permits-source/api/suite-summary.php
+      - name: Defect field and training regressions
+        run: |
+          php -l defects-source/defects.php
+          php defects-source/tests/offline-field-regression.php
+          php defects-source/tests/training-regression.php
+          php defects-source/tests/branding-regression.php
+      - name: Notices secure API checks
+        run: |
+          php -l notices-source/forms/clean-up/list.php
+          php notices-source/tests/suite-integration.php
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: notices-source/package-lock.json
+      - name: Notices durable offline sync regression
+        working-directory: notices-source
+        run: |
+          npm ci
+          npm test
