@@ -119,6 +119,7 @@
         const labels = {
           connected: 'Live data',
           needs_mapping: 'Map this project',
+          scope_unavailable: 'Separate site feed needed',
           unauthorized: 'Check integration key',
           not_configured: 'Enable module integration',
           unavailable: 'Temporarily unavailable'
