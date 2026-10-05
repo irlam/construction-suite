@@ -41,6 +41,14 @@ final class SummaryClient
                 continue;
             }
 
+            if (!empty($module['summary_scope_blocked'])) {
+                $results[$moduleKey] = [
+                    'status' => 'needs_mapping',
+                    'metrics' => [],
+                ];
+                continue;
+            }
+
             $externalRef = trim((string) ($module['external_project_ref'] ?? ''));
             $allowAll = (bool) ($module['summary_allow_all'] ?? false);
 
