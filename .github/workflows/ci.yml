@@ -18,3 +18,5 @@ jobs:
         run: find app config public tests -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Bootstrap smoke test
         run: php tests/bootstrap-smoke.php
+      - name: Project scoping regression
+        run: php tests/project-scope.php
