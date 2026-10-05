@@ -29,22 +29,17 @@ $activeProjectCount = (int) suite_db()->query(
      JOIN organizations o ON o.id = p.organization_id
      WHERE p.active = 1 AND o.active = 1'
 )->fetchColumn();
-$scopeModules = \Suite\Modules\\ProjectScope::apply($modules, $activeProjectCount);
+$scopeModules = \Suite\Modules\ProjectScope::apply($modules, $activeProjectCount);
 $kpiLinks = [];
 foreach ($scopeModules as $scopeModule) {
     $kpiLinks[(string) $scopeModule['key']] =
-        \Suite\Modules\\ModuleLinks::url($scopeModule);
+        \Suite\Modules\ModuleLinks::url($scopeModule);
 }
 
 
 $notificationCount = \Suite\Support\Notifications::count(
     (int) $user['id'],
     $project ? (int) $project['id'] : null
-);
-$notificationPreview = \Suite\Support\Notifications::recent(
-    (int) $user['id'],
-    $project ? (int) $project['id'] : null,
-    3
 );
 
 $firstName = trim(explode(' ', trim((string) $user['name']))[0] ?? 'there');
