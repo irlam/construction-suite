@@ -141,6 +141,10 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
           <span class="snapshot-icon orange"><svg><use href="/assets/icons.svg#truck"></use></svg></span>
           <div><strong data-summary-module="deliveries" data-summary-metric="today">—</strong><span>Deliveries today</span><small data-summary-status="deliveries">Connecting…</small></div>
         </article>
+        <article class="snapshot-card">
+          <span class="snapshot-icon purple"><svg><use href="/assets/icons.svg#document"></use></svg></span>
+          <div><strong data-summary-module="documents" data-summary-metric="open_count">—</strong><span>Open site notices</span><small data-summary-status="documents">Connecting…</small></div>
+        </article>
       </div>
     </section>
     <?php endif; ?>
