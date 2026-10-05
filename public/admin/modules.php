@@ -29,6 +29,14 @@ foreach ($projects as $candidate) {
     }
 }
 
+$orgProjectCount = 0;
+if ($project) {
+    $countStmt = $pdo->prepare(
+        'SELECT COUNT(*) FROM projects WHERE organization_id = ? AND active = 1'
+    );
+    $countStmt->execute([(int) $project['organization_id']]);
+    $orgProjectCount = (int) $countStmt->fetchColumn();
+}
 $ready = Connection::tableExists('project_modules');
 $message = null;
 $error = null;
@@ -133,6 +141,14 @@ $references = suite_reference_client()->fetch($definitions);
       <input type="hidden" name="action" value="save">
       <input type="hidden" name="project_id" value="<?= $projectId ?>">
 
+      <?php if ($orgProjectCount > 1): ?>
+        <div class="notice warning">
+          <strong>Multi-project safety is enabled.</strong>
+          Each live module needs an actual external project/site mapping.
+          All-data summaries are blocked. Deliveries is a single shared calendar
+          and needs a project-aware source before its figures can be shown here.
+        </div>
+      <?php endif; ?>
       <section class="module-config-grid">
         <?php foreach ($definitions as $module):
           $key = (string) $module['key'];
@@ -158,8 +174,12 @@ $references = suite_reference_client()->fetch($definitions);
             <label class="module-ref-label">External project reference
               <?php if ($referenceConnected): ?>
                 <select name="external_ref[<?= suite_e($key) ?>]">
-                  <?php if (!empty($module['summary_allow_all'])): ?>
-                    <option value="__all__" <?= $externalRef === '' || $externalRef === '__all__' ? 'selected' : '' ?>>All data in this module</option>
+                  <?php if (!empty($module['summary_allow_all']) && $orgProjectCount <= 1): ?>
+                    <?php if ($orgProjectCount <= 1): ?>
+                  <option value="__all__" <?= $externalRef === '' || $externalRef === '__all__' ? 'selected' : '' ?>>All data in this module</option>
+                  <?php else: ?>
+                  <option value="" selected>Mapping required before multi-site reporting</option>
+                  <?php endif; ?>
                   <?php else: ?>
                     <option value=""><?= $referenceItems ? 'Choose the matching project/site' : 'No project/site values found yet' ?></option>
                   <?php endif; ?>
@@ -183,7 +203,7 @@ $references = suite_reference_client()->fetch($definitions);
                 <?php if ($referenceState): ?>
                   <span class="mapping-note">Project lookup is <?= suite_e(str_replace('_', ' ', (string) ($referenceState['status'] ?? 'unavailable'))) ?>, so the Suite can use the whole module for now.</span>
                 <?php else: ?>
-                  <span class="mapping-note">This module can use all data until project-level mapping is available.</span>
+                  <span class="mapping-note">This module has no verified site list. Multi-site reporting is blocked until it supports a real mapping.</span>
                 <?php endif; ?>
               <?php else: ?>
                 <input type="text" name="external_ref[<?= suite_e($key) ?>]" value="<?= suite_e($externalRef) ?>" placeholder="Optional — mapping lookup is not connected yet">
