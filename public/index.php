@@ -23,6 +23,20 @@ $role = $projectsRepo->roleFor($user, $project);
 $modules = suite_modules()->allForProject($role, $project ? (int) $project['id'] : null);
 $summaryConfigured = suite_summary_client()->configured();
 
+// Build click-through links from the same isolation rules used by the API.
+$activeProjectCount = (int) suite_db()->query(
+    'SELECT COUNT(*) FROM projects p
+     JOIN organizations o ON o.id = p.organization_id
+     WHERE p.active = 1 AND o.active = 1'
+)->fetchColumn();
+$scopeModules = \Suite\Modules\\ProjectScope::apply($modules, $activeProjectCount);
+$kpiLinks = [];
+foreach ($scopeModules as $scopeModule) {
+    $kpiLinks[(string) $scopeModule['key']] =
+        \Suite\Modules\\ModuleLinks::url($scopeModule);
+}
+
+
 $notificationCount = \Suite\Support\Notifications::count(
     (int) $user['id'],
     $project ? (int) $project['id'] : null
@@ -124,23 +138,43 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
       <div class="snapshot-grid">
         <article class="snapshot-card">
           <span class="snapshot-icon blue"><svg><use href="/assets/icons.svg#defects"></use></svg></span>
-          <div><strong data-summary-module="defects" data-summary-metric="active">—</strong><span>Active defects</span><small data-summary-status="defects">Connecting…</small></div>
+          <div><strong data-summary-module="defects" data-summary-metric="active">—</strong><span>Active defects</span><small data-summary-status="defects">Connecting…</small>
+            <?php if (!empty($kpiLinks['defects'])): ?>
+              <a class="kpi-link" href="<?= suite_e((string) $kpiLinks['defects']) ?>" target="_blank" rel="noopener noreferrer">View records ↗</a>
+            <?php endif; ?>
+          </div>
         </article>
         <article class="snapshot-card">
           <span class="snapshot-icon purple"><svg><use href="/assets/icons.svg#permit"></use></svg></span>
-          <div><strong data-summary-module="permits" data-summary-metric="pending_approval">—</strong><span>Permits awaiting approval</span><small data-summary-status="permits">Connecting…</small></div>
+          <div><strong data-summary-module="permits" data-summary-metric="pending_approval">—</strong><span>Permits awaiting approval</span><small data-summary-status="permits">Connecting…</small>
+            <?php if (!empty($kpiLinks['permits'])): ?>
+              <a class="kpi-link" href="<?= suite_e((string) $kpiLinks['permits']) ?>" target="_blank" rel="noopener noreferrer">View records ↗</a>
+            <?php endif; ?>
+          </div>
         </article>
         <article class="snapshot-card">
           <span class="snapshot-icon green"><svg><use href="/assets/icons.svg#shield"></use></svg></span>
-          <div><strong data-summary-module="safety" data-summary-metric="open_actions">—</strong><span>Open safety actions</span><small data-summary-status="safety">Connecting…</small></div>
+          <div><strong data-summary-module="safety" data-summary-metric="open_actions">—</strong><span>Open safety actions</span><small data-summary-status="safety">Connecting…</small>
+            <?php if (!empty($kpiLinks['safety'])): ?>
+              <a class="kpi-link" href="<?= suite_e((string) $kpiLinks['safety']) ?>" target="_blank" rel="noopener noreferrer">View records ↗</a>
+            <?php endif; ?>
+          </div>
         </article>
         <article class="snapshot-card">
           <span class="snapshot-icon orange"><svg><use href="/assets/icons.svg#truck"></use></svg></span>
-          <div><strong data-summary-module="deliveries" data-summary-metric="today">—</strong><span>Deliveries today</span><small data-summary-status="deliveries">Connecting…</small></div>
+          <div><strong data-summary-module="deliveries" data-summary-metric="today">—</strong><span>Deliveries today</span><small data-summary-status="deliveries">Connecting…</small>
+            <?php if (!empty($kpiLinks['deliveries'])): ?>
+              <a class="kpi-link" href="<?= suite_e((string) $kpiLinks['deliveries']) ?>" target="_blank" rel="noopener noreferrer">View records ↗</a>
+            <?php endif; ?>
+          </div>
         </article>
         <article class="snapshot-card">
           <span class="snapshot-icon purple"><svg><use href="/assets/icons.svg#document"></use></svg></span>
-          <div><strong data-summary-module="documents" data-summary-metric="open_count">—</strong><span>Open site notices</span><small data-summary-status="documents">Connecting…</small></div>
+          <div><strong data-summary-module="documents" data-summary-metric="open_count">—</strong><span>Open site notices</span><small data-summary-status="documents">Connecting…</small>
+            <?php if (!empty($kpiLinks['documents'])): ?>
+              <a class="kpi-link" href="<?= suite_e((string) $kpiLinks['documents']) ?>" target="_blank" rel="noopener noreferrer">View records ↗</a>
+            <?php endif; ?>
+          </div>
         </article>
       </div>
     </section>
