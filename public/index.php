@@ -23,18 +23,15 @@ $role = $projectsRepo->roleFor($user, $project);
 $modules = suite_modules()->allForProject($role, $project ? (int) $project['id'] : null);
 $summaryConfigured = suite_summary_client()->configured();
 
-$notificationCount = 0;
-try {
-    if (\Suite\Database\Connection::tableExists('notifications')) {
-        $stmt = suite_db()->prepare(
-            'SELECT COUNT(*) FROM notifications WHERE user_id = ? AND read_at IS NULL'
-        );
-        $stmt->execute([(int) $user['id']]);
-        $notificationCount = (int) $stmt->fetchColumn();
-    }
-} catch (Throwable $e) {
-    $notificationCount = 0;
-}
+$notificationCount = \Suite\Support\Notifications::count(
+    (int) $user['id'],
+    $project ? (int) $project['id'] : null
+);
+$notificationPreview = \Suite\Support\Notifications::recent(
+    (int) $user['id'],
+    $project ? (int) $project['id'] : null,
+    3
+);
 
 $firstName = trim(explode(' ', trim((string) $user['name']))[0] ?? 'there');
 $projectName = $project['name'] ?? 'No project assigned';
@@ -65,7 +62,7 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
       <button class="icon-button install-button" type="button" data-install hidden aria-label="Install Construction Suite">
         <svg><use href="/assets/icons.svg#download"></use></svg>
       </button>
-      <a class="icon-button notification-button" href="#notifications" aria-label="Notifications">
+      <a class="icon-button notification-button" href="/notifications.php" aria-label="Notifications">
         <svg><use href="/assets/icons.svg#bell"></use></svg>
         <?php if ($notificationCount > 0): ?><span class="notification-count"><?= $notificationCount ?></span><?php endif; ?>
       </a>
@@ -183,11 +180,14 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
     </section>
 
     <section class="notification-shell" id="notifications">
-      <div class="section-heading compact"><div><p class="eyebrow">NOTIFICATIONS</p><h2>What needs attention</h2></div></div>
+      <div class="section-heading compact">
+        <div><p class="eyebrow">NOTIFICATIONS</p><h2>What needs attention</h2></div>
+        <a class="button small secondary" href="/notifications.php">View notifications</a>
+      </div>
       <?php if ($notificationCount === 0): ?>
-        <div class="empty-panel"><svg><use href="/assets/icons.svg#check"></use></svg><strong>Nothing waiting</strong><span>New Suite notifications will appear here as modules are connected.</span></div>
+        <div class="empty-panel"><svg><use href="/assets/icons.svg#check"></use></svg><strong>Nothing waiting</strong><span>You have no unread Suite notifications for this project.</span></div>
       <?php else: ?>
-        <div class="empty-panel"><svg><use href="/assets/icons.svg#bell"></use></svg><strong><?= $notificationCount ?> unread notification<?= $notificationCount === 1 ? '' : 's' ?></strong><span>The detailed notification centre is the next Hub V1 milestone.</span></div>
+        <div class="empty-panel"><svg><use href="/assets/icons.svg#bell"></use></svg><strong><?= $notificationCount ?> unread notification<?= $notificationCount === 1 ? '' : 's' ?></strong><span>Open your inbox to review and acknowledge messages.</span></div>
       <?php endif; ?>
     </section>
   </main>
