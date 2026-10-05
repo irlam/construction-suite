@@ -158,6 +158,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;bac
 .snapshot-card>div{display:grid;min-width:0}.snapshot-card strong{font-size:1.55rem;line-height:1;letter-spacing:-.04em}.snapshot-card span{font-size:.78rem;color:#475467;margin-top:.25rem}.snapshot-card small{font-size:.68rem;color:#98a2b3;margin-top:.35rem}
 .snapshot-icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;flex:0 0 auto}.snapshot-icon.blue{background:#eff4ff;color:#2f6fed}.snapshot-icon.purple{background:#f4f0ff;color:#7c4dff}.snapshot-icon.green{background:#ecfdf3;color:#039855}.snapshot-icon.orange{background:#fff6e8;color:#ed8b00}
 .snapshot-card.muted-card{background:rgba(255,255,255,.55)}
+.kpi-link{font-size:.73rem;font-weight:700;color:#2458bd;margin-top:.55rem;display:inline-block;text-decoration:none}.kpi-link:hover{text-decoration:underline}.kpi-link:focus-visible{outline:2px solid #2458bd;outline-offset:3px;border-radius:3px}
 @media(max-width:900px){.snapshot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.snapshot-grid{grid-template-columns:1fr 1fr}.snapshot-card{padding:.8rem}.snapshot-icon{width:38px;height:38px}.snapshot-card strong{font-size:1.25rem}}
 
