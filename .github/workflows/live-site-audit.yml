@@ -45,6 +45,17 @@ jobs:
             fi
           done
 
+          # Read-only probes of existing Deliveries pages help distinguish
+          # a broken database bootstrap from a broken Suite-only endpoint.
+          for url in \
+            https://sitedeliveries.site/gateboard_data.php \
+            https://sitedeliveries.site/gateboard.php \
+            https://sitedeliveries.site/api/suite-references.php; do
+            code=$(curl -sS --retry 1 --connect-timeout 8 --max-time 25 \
+              --output /dev/null --write-out '%{http_code}' "$url") || code="000"
+            printf '%-60s %s\n' "$url" "$code"
+          done
+
           if [ "$failures" -gt 0 ]; then
             echo "::error::Public probe found $failures unverified endpoints."
             exit 1
