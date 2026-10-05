@@ -17,14 +17,12 @@ $project = suite_projects()->currentForUser($user);
 $role = suite_projects()->roleFor($user, $project);
 $modules = suite_modules()->allForProject($role, $project ? (int) $project['id'] : null);
 // Organisation boundaries are enforced before contacting external APIs.
-$projectCount = 0;
-if ($project) {
-    $countStmt = suite_db()->prepare(
-        'SELECT COUNT(*) FROM projects WHERE organization_id = ? AND active = 1'
-    );
-    $countStmt->execute([(int) $project['organization_id']]);
-    $projectCount = (int) $countStmt->fetchColumn();
-}
+// Global shared integration keys may span several organisations.
+$projectCount = (int) suite_db()->query(
+    'SELECT COUNT(*) FROM projects p
+     JOIN organizations o ON o.id = p.organization_id
+     WHERE p.active = 1 AND o.active = 1'
+)->fetchColumn();
 $modules = \Suite\Modules\ProjectScope::apply($modules, $projectCount);
 $summary = suite_summary_client()->fetch($modules);
 
