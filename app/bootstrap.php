@@ -24,6 +24,7 @@ require_once SUITE_ROOT . '/app/Modules/ModuleHealth.php';
 require_once SUITE_ROOT . '/app/Modules/SummaryClient.php';
 require_once SUITE_ROOT . '/app/Modules/ReferenceClient.php';
 require_once SUITE_ROOT . '/app/Support/Audit.php';
+require_once SUITE_ROOT . '/app/Support/Notifications.php';
 
 Env::load(SUITE_ROOT . '/.env');
 
