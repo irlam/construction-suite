@@ -1,0 +1,52 @@
+name: Public live-site integration audit
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  endpoints:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check live HTTPS entry points and fail-closed APIs
+        shell: bash
+        run: |
+          set -u
+          failures=0
+          printf '%-60s %s\n' "URL" "HTTP"
+          for url in \
+            https://suite.defecttracker.uk/ \
+            https://defectnotice.site/ \
+            https://sitepermits.site/ \
+            https://sitesafety.site/ \
+            https://sitedeliveries.site/ \
+            https://sitenotices.site/; do
+            code=$(curl -sS -L --retry 1 --connect-timeout 8 --max-time 25 \
+              --output /dev/null --write-out '%{http_code}' "$url") || code="000"
+            printf '%-60s %s\n' "$url" "$code"
+            if [[ ! "$code" =~ ^(200|301|302|303|307|308|401|403)$ ]]; then failures=$((failures + 1)); fi
+          done
+
+          # Unauthenticated calls must not expose data. A 503 means the
+          # integration is not configured and requires manual private settings.
+          for url in \
+            https://defectnotice.site/api/suite-summary.php \
+            https://sitepermits.site/api/suite-summary.php \
+            https://sitesafety.site/api/suite-summary.php \
+            https://sitedeliveries.site/api/suite-summary.php \
+            https://sitenotices.site/api/suite-summary.php; do
+            code=$(curl -sS --retry 1 --connect-timeout 8 --max-time 25 \
+              --output /dev/null --write-out '%{http_code}' "$url") || code="000"
+            printf '%-60s %s\n' "$url" "$code"
+            if [[ "$code" != "401" ]]; then
+              echo "::warning::Expected HTTP 401 without a private Suite key on $url; got $code"
+              failures=$((failures + 1))
+            fi
+          done
+
+          if [ "$failures" -gt 0 ]; then
+            echo "::error::Public probe found $failures unverified endpoints."
+            exit 1
+          fi
+          echo "PASS: public sites respond and protected endpoints reject anonymous requests."
