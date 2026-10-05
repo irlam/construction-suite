@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/app/Modules/ProjectScope.php';
+require_once dirname(__DIR__) . '/app/Modules/ModuleLinks.php';
 
 use Suite\Modules\ProjectScope;
 
@@ -45,6 +46,29 @@ check_scope(
 check_scope(
     ($modules[1]['summary_scope_blocked'] ?? null) === null,
     'Policy must not mutate its input'
+);
+
+check_scope(
+    \Suite\Modules\\ModuleLinks::url($multi[1]) === null,
+    'Unscoped KPI link must be blocked'
+);
+check_scope(
+    \Suite\Modules\\ModuleLinks::url($multi[3]) === null,
+    'Shared Deliveries calendar must never link as site-isolated'
+);
+check_scope(
+    str_contains(
+        (string) \Suite\Modules\\ModuleLinks::url($multi[0]),
+        'project=123'
+    ),
+    'Mapped Defects link must preserve project filter'
+);
+check_scope(
+    str_contains(
+        (string) \Suite\Modules\\ModuleLinks::url($multi[4]),
+        'site_exact=West%20Site'
+    ),
+    'Mapped Notices URL must use exact, encoded site filter'
 );
 
 echo "PASS: Single-project backward compatibility and multi-project fail-closed scoping.\n";
