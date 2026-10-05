@@ -119,7 +119,7 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
 
     <section class="status-grid" aria-label="Suite status">
       <article><span class="status-icon blue"><svg><use href="/assets/icons.svg#grid"></use></svg></span><div><strong data-module-health-summary>Checking…</strong><span>Module availability</span></div></article>
-      <article><span class="status-icon green"><svg><use href="/assets/icons.svg#sync"></use></svg></span><div><strong data-sync-label>Up to date</strong><span>Device sync</span></div></article>
+      <article><span class="status-icon green"><svg><use href="/assets/icons.svg#sync"></use></svg></span><div><strong data-sync-label>Ready</strong><span>Suite shell</span></div></article>
       <article><span class="status-icon amber"><svg><use href="/assets/icons.svg#bell"></use></svg></span><div><strong><?= $notificationCount ?></strong><span>Unread alerts</span></div></article>
       <article><span class="status-icon slate"><span class="status-dot" data-connection-dot></span></span><div><strong data-connection-text>Checking…</strong><span>Connection</span></div></article>
     </section>
