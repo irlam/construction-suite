@@ -20,6 +20,7 @@ require_once SUITE_ROOT . '/app/Auth/Auth.php';
 require_once SUITE_ROOT . '/app/Projects/ProjectRepository.php';
 require_once SUITE_ROOT . '/app/Modules/ModuleRegistry.php';
 require_once SUITE_ROOT . '/app/Modules/ProjectScope.php';
+require_once SUITE_ROOT . '/app/Modules/ModuleLinks.php';
 require_once SUITE_ROOT . '/app/Modules/ModuleHealth.php';
 require_once SUITE_ROOT . '/app/Modules/SummaryClient.php';
 require_once SUITE_ROOT . '/app/Modules/ReferenceClient.php';
