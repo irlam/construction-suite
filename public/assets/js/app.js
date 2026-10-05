@@ -174,7 +174,7 @@
     });
 
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      const key = 'suite-sw-refresh-v0.3.1';
+      const key = 'suite-sw-refresh-v0.4.0';
       if (sessionStorage.getItem(key)) return;
       sessionStorage.setItem(key, '1');
       window.location.reload();
