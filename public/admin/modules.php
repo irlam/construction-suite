@@ -36,6 +36,9 @@ $orgProjectCount = (int) $pdo->query(
      JOIN organizations o ON o.id = p.organization_id
      WHERE p.active = 1 AND o.active = 1'
 )->fetchColumn();
+$definitions = suite_modules()->definitions();
+$references = suite_reference_client()->fetch($definitions);
+
 $ready = Connection::tableExists('project_modules');
 $message = null;
 $error = null;
@@ -54,6 +57,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $ready && $project) {
                 $isEnabled = isset($enabled[$key]) ? 1 : 0;
                 $externalRef = trim((string) ($externalRefs[$key] ?? ''));
                 $externalRef = $externalRef !== '' ? $externalRef : null;
+
+                // Reject submitted references that are not present in the
+                // authenticated source module. Never trust a forged select.
+                $discovery = $references[$key] ?? null;
+                if (($discovery['status'] ?? '') === 'connected') {
+                    $available = array_column((array) ($discovery['items'] ?? []), 'value');
+                    if ($externalRef !== null && $externalRef !== '__all__'
+                        && !in_array($externalRef, $available, true)) {
+                        throw new RuntimeException('Unknown source site or project reference.');
+                    }
+                }
+
+                // One upstream site must not silently serve two independent
+                // Suite projects, including across separate organisations.
+                if ($orgProjectCount > 1
+                    && $externalRef !== null
+                    && $externalRef !== '__all__'
+                    && !empty($module['summary_url'])) {
+                    $collision = $pdo->prepare(
+                        'SELECT COUNT(*) FROM project_modules
+                         WHERE module_key = ? AND external_project_ref = ?
+                           AND project_id <> ? AND enabled = 1'
+                    );
+                    $collision->execute([$key, $externalRef, $projectId]);
+                    if ((int) $collision->fetchColumn() > 0) {
+                        throw new RuntimeException('Source mapping belongs to another project.');
+                    }
+                }
+
 
                 $find = $pdo->prepare(
                     'SELECT id FROM project_modules WHERE project_id = ? AND module_key = ? LIMIT 1'
@@ -105,8 +137,6 @@ if ($ready && $project) {
         $settings[(string) $row['module_key']] = $row;
     }
 }
-$definitions = suite_modules()->definitions();
-$references = suite_reference_client()->fetch($definitions);
 ?>
 <!doctype html>
 <html lang="en">
