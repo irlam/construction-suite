@@ -16,6 +16,16 @@ if (!$user) {
 $project = suite_projects()->currentForUser($user);
 $role = suite_projects()->roleFor($user, $project);
 $modules = suite_modules()->allForProject($role, $project ? (int) $project['id'] : null);
+// Organisation boundaries are enforced before contacting external APIs.
+$projectCount = 0;
+if ($project) {
+    $countStmt = suite_db()->prepare(
+        'SELECT COUNT(*) FROM projects WHERE organization_id = ? AND active = 1'
+    );
+    $countStmt->execute([(int) $project['organization_id']]);
+    $projectCount = (int) $countStmt->fetchColumn();
+}
+$modules = \Suite\Modules\ProjectScope::apply($modules, $projectCount);
 $summary = suite_summary_client()->fetch($modules);
 
 echo json_encode([
