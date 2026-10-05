@@ -153,7 +153,7 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;bac
 @media(max-width:720px){.module-config-grid{grid-template-columns:1fr}.sticky-save{bottom:4.5rem;align-items:stretch;flex-direction:column}.sticky-save .button{width:100%}}
 
 .snapshot-shell{margin:0 0 2.2rem}
-.snapshot-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.8rem}
+.snapshot-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.8rem}
 .snapshot-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:1rem;display:flex;align-items:center;gap:.8rem;min-width:0}
 .snapshot-card>div{display:grid;min-width:0}.snapshot-card strong{font-size:1.55rem;line-height:1;letter-spacing:-.04em}.snapshot-card span{font-size:.78rem;color:#475467;margin-top:.25rem}.snapshot-card small{font-size:.68rem;color:#98a2b3;margin-top:.35rem}
 .snapshot-icon{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;flex:0 0 auto}.snapshot-icon.blue{background:#eff4ff;color:#2f6fed}.snapshot-icon.purple{background:#f4f0ff;color:#7c4dff}.snapshot-icon.green{background:#ecfdf3;color:#039855}.snapshot-icon.orange{background:#fff6e8;color:#ed8b00}
