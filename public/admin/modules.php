@@ -29,14 +29,13 @@ foreach ($projects as $candidate) {
     }
 }
 
-$orgProjectCount = 0;
-if ($project) {
-    $countStmt = $pdo->prepare(
-        'SELECT COUNT(*) FROM projects WHERE organization_id = ? AND active = 1'
-    );
-    $countStmt->execute([(int) $project['organization_id']]);
-    $orgProjectCount = (int) $countStmt->fetchColumn();
-}
+// The integration secret is global; even different organisations must
+// never inherit all-data views from the same external product.
+$orgProjectCount = (int) $pdo->query(
+    'SELECT COUNT(*) FROM projects p
+     JOIN organizations o ON o.id = p.organization_id
+     WHERE p.active = 1 AND o.active = 1'
+)->fetchColumn();
 $ready = Connection::tableExists('project_modules');
 $message = null;
 $error = null;
