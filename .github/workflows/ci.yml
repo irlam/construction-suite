@@ -20,3 +20,5 @@ jobs:
         run: php tests/bootstrap-smoke.php
       - name: Project scoping regression
         run: php tests/project-scope.php
+      - name: Notifications permissions regression
+        run: php tests/notifications.php
