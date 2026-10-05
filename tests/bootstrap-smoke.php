@@ -18,14 +18,22 @@ $check(class_exists(\Suite\Modules\ReferenceClient::class), 'Project reference d
 $check(is_file(SUITE_ROOT . '/database/migrations/001_project_modules.mysql.sql'), 'MySQL project_modules migration is missing.');
 $check(is_file(SUITE_ROOT . '/database/migrations/001_project_modules.sqlite.sql'), 'SQLite project_modules migration is missing.');
 
-$integratedKeys = ['defects', 'permits', 'safety'];
+$integratedKeys = ['defects', 'permits', 'safety', 'deliveries', 'documents'];
 foreach ($modules as $module) {
     if (in_array((string) ($module['key'] ?? ''), $integratedKeys, true)) {
         $check(($module['summary_allow_all'] ?? false) === true, 'Integrated module must allow all-data fallback.');
     }
+    if (in_array((string) ($module['key'] ?? ''), $integratedKeys, true)) {
+        $check(str_starts_with((string) ($module['summary_url'] ?? ''), 'https://'), 'Live summary URL missing.');
+        $check(str_starts_with((string) ($module['reference_url'] ?? ''), 'https://'), 'Live references URL missing.');
+    }
     $check(isset($module['key'], $module['name'], $module['url']), 'Module registry entry is incomplete.');
     $check(str_starts_with((string) $module['url'], 'https://'), 'Module URLs must use HTTPS.');
 }
+
+$dashboardSource = (string) file_get_contents(SUITE_ROOT . '/public/index.php');
+$check(str_contains($dashboardSource, 'data-summary-module="deliveries"'), 'Deliveries KPI is missing.');
+$check(str_contains($dashboardSource, 'data-summary-module="documents"'), 'Notices KPI is missing.');
 
 $setupSource = (string) file_get_contents(SUITE_ROOT . '/public/setup.php');
 $check(str_contains($setupSource, 'role_key'), 'First-run setup must insert memberships using role_key.');
