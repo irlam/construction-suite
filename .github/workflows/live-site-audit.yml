@@ -21,7 +21,12 @@ jobs:
             https://sitepermits.site/ \
             https://sitesafety.site/ \
             https://sitedeliveries.site/ \
-            https://sitenotices.site/; do
+            https://sitenotices.site/ \
+            https://handover.defecttracker.uk/ \
+            https://programme.defecttracker.uk/ \
+            https://status.defecttracker.uk/ \
+            https://suite.defecttracker.uk/manifest.webmanifest \
+            https://suite.defecttracker.uk/service-worker.js; do
             code=$(curl -sS -L --retry 1 --connect-timeout 8 --max-time 25 \
               --output /dev/null --write-out '%{http_code}' "$url") || code="000"
             printf '%-60s %s\n' "$url" "$code"
