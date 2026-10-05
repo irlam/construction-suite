@@ -15,7 +15,7 @@ jobs:
           php-version: '8.2'
           extensions: pdo, pdo_mysql, pdo_sqlite
       - name: PHP syntax
-        run: find app config public tests -name '*.php' -print0 | xargs -0 -n1 php -l
+        run: find app bin config public tests -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Bootstrap smoke test
         run: php tests/bootstrap-smoke.php
       - name: Project scoping regression
