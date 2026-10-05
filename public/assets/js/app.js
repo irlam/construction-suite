@@ -13,9 +13,9 @@
       dot.classList.toggle('offline', !online);
     });
     labels.forEach(label => label.textContent = online ? 'Online' : 'Offline');
-    if (!online) syncLabels.forEach(label => label.textContent = 'Paused offline');
+    if (!online) syncLabels.forEach(label => label.textContent = 'Offline shell');
     else if ((Number(localStorage.getItem('suiteQueued')) || 0) === 0) {
-      syncLabels.forEach(label => label.textContent = 'Up to date');
+      syncLabels.forEach(label => label.textContent = 'Ready');
     }
   }
 
@@ -139,8 +139,8 @@
   function updateQueueStatus() {
     const queued = Number(localStorage.getItem('suiteQueued')) || 0;
     syncLabels.forEach(label => {
-      if (!navigator.onLine) label.textContent = queued ? String(queued) + ' queued' : 'Paused offline';
-      else label.textContent = queued ? String(queued) + ' queued' : 'Up to date';
+      if (!navigator.onLine) label.textContent = queued ? String(queued) + ' locally queued' : 'Offline shell';
+      else label.textContent = queued ? String(queued) + ' locally queued' : 'Ready';
     });
   }
 
