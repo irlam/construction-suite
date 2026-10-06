@@ -2,7 +2,7 @@ name: Public live-site integration audit
 
 on:
   push:
-    branches: [main]
+    branches: [main, work/company-admin-controls]
   workflow_dispatch:
 
 jobs:
@@ -59,6 +59,21 @@ jobs:
             code=$(curl -sS --retry 1 --connect-timeout 8 --max-time 25 \
               --output /dev/null --write-out '%{http_code}' "$url") || code="000"
             printf '%-60s %s\n' "$url" "$code"
+          done
+
+          # Staging UI availability and anonymous denial only. These checks do
+          # not establish authenticated access, tenant isolation or readiness.
+          for host in alpha.programme.defecttracker.uk beta.programme.defecttracker.uk; do
+            for path in / /api/workspace.php /app/suite-prepend.php /deployment/manifest.json; do
+              url="https://$host$path"
+              code=$(curl -sS --connect-timeout 8 --max-time 25 --output /dev/null --write-out '%{http_code}' "$url") || code="000"
+              printf '%-60s %s\n' "$url" "$code"
+              case "$path" in
+                /) [[ "$code" == "200" ]] || failures=$((failures + 1));;
+                /api/workspace.php) [[ "$code" =~ ^(401|403|503)$ ]] || failures=$((failures + 1));;
+                *) [[ "$code" =~ ^(403|404)$ ]] || failures=$((failures + 1));;
+              esac
+            done
           done
 
           if [ "$failures" -gt 0 ]; then
