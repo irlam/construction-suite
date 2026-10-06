@@ -2,7 +2,7 @@ name: Construction Suite checks
 
 on:
   push:
-    branches: [main]
+    branches: [main, work/tenant-handoff-foundation]
   pull_request:
 
 jobs:
@@ -25,3 +25,6 @@ jobs:
 
       - name: Company tenancy regression
         run: php tests/company-tenancy.php
+
+      - name: Module handoff security regression
+        run: php tests/module-handoff.php

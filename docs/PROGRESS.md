@@ -28,3 +28,11 @@ Audit source modules for tenant boundaries and introduce identity handoff in a t
 Release commit 94fe456712f1bc029bc78589b98ca6b0fbc2f7c4 deployed through the existing automatic Plesk Git configuration. The live /company/ page renders the current company's projects and access controls. Original dashboard verified with all eight modules available and live summary values present. GitHub Suite checks, cross-product regression audit and public live-site integration audit all completed successfully.
 
 Public project documentation excludes private hosting identifiers; private recovery notes are kept separately. No production accounts, memberships or projects were created or modified during live verification.
+
+## Staged next phase (not deployed)
+
+Branch `work/tenant-handoff-foundation` contains the connected-tool source audit and Suite-side isolated-instance/handoff foundation. PHP syntax and all five local regression suites pass, including new tests for foreign project access, shared/invalid origins, unverified gateways, bad server keys, mismatched browser state/audience, replay, expiry, inventory rebinding, membership revocation, inactive users and disabled modules. Existing dashboard regressions pass.
+
+Plesk Git controls currently return 502 Bad Gateway / connection refused in the working browser, including a later recovery check. This prevents preservation of legacy live configuration and deployment verification. Configuration-loader replacement is deliberately held until the live values have been copied privately. Tested CLI migration helpers are published in Programme and Safety; server execution is not confirmed. Historical committed credentials still need owner-controlled rotation.
+
+Next: recover Plesk access; preserve private configuration with the CLI helpers; verify the file and application before publishing replacement loaders. Then implement one app-side gateway in an isolated staging instance and prove two-instance database/file/session/offline isolation before onboarding companies. Keep the Suite-side branch unmerged until those adapters and MySQL migration are reviewed and tested.

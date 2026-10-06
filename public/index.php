@@ -22,7 +22,7 @@ $projectList = $projectsRepo->forUser($user);
 $project = $projectsRepo->currentForUser($user);
 $role = $projectsRepo->roleFor($user, $project);
 $modules = suite_modules()->allForProject($role, $project ? (int) $project['id'] : null);
-$summaryConfigured = suite_summary_client()->configured();
+$summaryConfigured = suite_summary_client()->configured($modules);
 
 // Build click-through links from the same isolation rules used by the API.
 $activeProjectCount = (int) suite_db()->query(
@@ -188,7 +188,7 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
     <section class="module-grid" id="modules">
       <?php foreach ($modules as $module): ?>
         <a class="module-card accent-<?= suite_e((string) $module['accent']) ?>"
-           href="<?= suite_e((string) $module['url']) ?>"
+           href="<?= suite_e((string) ($module['launch_url'] ?? $module['url'])) ?>"
            target="_blank" rel="noopener">
           <span class="module-icon"><svg><use href="/assets/icons.svg#<?= suite_e((string) $module['icon']) ?>"></use></svg></span>
           <span class="module-arrow"><svg><use href="/assets/icons.svg#arrow"></use></svg></span>

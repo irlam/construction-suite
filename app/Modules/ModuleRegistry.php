@@ -33,19 +33,12 @@ final class ModuleRegistry
         return $result;
     }
 
-    public function allForProject(string $role, ?int $projectId): array
+    public function allForProject(string $role, ?int $projectId, bool $enforceIsolation = true): array
     {
         $modules = $this->all($role);
-        // Legacy modules have independent account/data boundaries. Until an
-        // adapter is verified, only the platform owner may launch them here.
-        if ($role !== 'platform_admin') {
-            $modules = array_values(array_filter($modules, static fn(array $module): bool =>
-                ($module['tenant_isolated'] ?? false) === true
-            ));
-        }
         if (!$projectId) return [];
         if (!Connection::tableExists('project_modules')) {
-            return $modules;
+            return $enforceIsolation && $role !== 'platform_admin' ? [] : $modules;
         }
 
         $stmt = Connection::pdo()->prepare(
@@ -75,7 +68,29 @@ final class ModuleRegistry
             $result[] = $module;
         }
 
-        return $result;
+        if (!$enforceIsolation) return $result;
+        $project = Connection::pdo()->prepare('SELECT organization_id FROM projects WHERE id = ?');
+        $project->execute([$projectId]);
+        $organizationId = (int) ($project->fetchColumn() ?: 0);
+        $instances = [];
+        foreach (suite_instances()->forProject($projectId, $organizationId) as $instance) $instances[$instance['module_key']] = $instance;
+        $scoped = [];
+        foreach ($result as $module) {
+            $instance = $instances[$module['key']] ?? null;
+            if ($instance) {
+                $module['url'] = $instance['origin'];
+                $module['launch_url'] = '/launch.php?instance_id=' . $instance['id'];
+                $module['tenant_isolated'] = true;
+                $module['single_project_instance'] = true;
+                $module['integration_key_env'] = $instance['key_env'];
+                unset($module['summary_url'], $module['reference_url'], $module['health_url'], $module['external_project_ref']);
+                if (($instance['summary_verified'] ?? false) === true) $module['summary_url'] = $instance['origin'] . '/api/suite-summary.php';
+                $module['summary_requires_ref'] = false;
+                $module['single_calendar'] = false;
+            }
+            if ($role === 'platform_admin' || !empty($module['tenant_isolated'])) $scoped[] = $module;
+        }
+        return $scoped;
     }
 
     public function count(string $role): int
