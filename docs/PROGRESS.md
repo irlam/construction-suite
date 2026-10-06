@@ -22,3 +22,9 @@ Local PHP 8.3 syntax checks and bootstrap, project-scope, notifications and comp
 ## Next work
 
 Audit source modules for tenant boundaries and introduce identity handoff in a test environment. Do not enable tenant_isolated on legacy modules before all access paths are verified. Verify application credentials only through secure sign-in flows as required. Keep this record current after each deployment.
+
+## Deployment verification
+
+Release commit 94fe456712f1bc029bc78589b98ca6b0fbc2f7c4 deployed through the existing automatic Plesk Git configuration. The live /company/ page renders the current company's projects and access controls. Original dashboard verified with all eight modules available and live summary values present. GitHub Suite checks, cross-product regression audit and public live-site integration audit all completed successfully.
+
+Public project documentation excludes private hosting identifiers; private recovery notes are kept separately. No production accounts, memberships or projects were created or modified during live verification.
