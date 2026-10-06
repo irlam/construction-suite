@@ -60,3 +60,16 @@ Hub V1 launches the existing production tools at their current domains. They kee
 ## Important security boundary
 
 Do **not** point the public document root at the repository root. Only `public/` should be directly web-accessible. This keeps application classes, schemas, documentation, `.env` and other private files outside the website document root.
+
+## Confirmed live Suite deployment (6 October 2026)
+
+- Public domain: suite.defecttracker.uk.
+- Application root is private; the public document root exposes only public/.
+- PHP 8.4.24, MySQL; existing project_modules migration applied.
+- Version 0.5.0 requires no database migration. It adds /company/ and reuses existing memberships.
+- Pre-change code rollback ref: e84c06789846fb3a81ab2c88edc51c0dc5833c1d. Deploy that ref through the existing Plesk Git workflow if the new code must be rolled back. Preserve the private .env and storage directories.
+- A pre-change configuration/database backup was completed on 6 October 2026; its private restore identifier is recorded separately. Restore only the relevant Suite database/configuration through selective restore if needed; do not restore the entire shared subscription over unrelated sites. No database restore is needed for code-only rollback of 0.5.0.
+
+### Observed tool domains
+
+Defects: defectnotice.site; Deliveries: sitedeliveries.site; Safety: sitesafety.site; Permits: sitepermits.site; Notices: sitenotices.site; Handover: handover.defecttracker.uk; Programme: programme.defecttracker.uk; Status: status.defecttracker.uk. All appear in Plesk. Individual repository/deployment mappings still need inspection; visibility in Plesk does not establish functional integration.

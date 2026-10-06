@@ -42,6 +42,7 @@ try {
     <article><strong><?= suite_e((string) \Suite\Database\Connection::driver()) ?></strong><span>DB driver</span></article>
   </section>
   <section class="admin-shortcuts">
+    <a class="admin-shortcut" href="/company/"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#site"></use></svg></span><div><strong>Company dashboards</strong><span>Manage each company and its project access</span></div></a>
     <a class="admin-shortcut" href="/admin/projects.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#site"></use></svg></span><div><strong>Organisations & projects</strong><span>Create sites and control active projects</span></div></a>
     <a class="admin-shortcut" href="/admin/users.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#settings"></use></svg></span><div><strong>Users & access</strong><span>Create accounts and assign project roles</span></div></a>
     <a class="admin-shortcut" href="/admin/modules.php"><span class="module-icon tiny"><svg><use href="/assets/icons.svg#grid"></use></svg></span><div><strong>Project modules</strong><span>Choose which tools each site can use</span></div></a>

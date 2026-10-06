@@ -18,6 +18,7 @@ require_once SUITE_ROOT . '/app/Database/Connection.php';
 require_once SUITE_ROOT . '/app/Database/Migrator.php';
 require_once SUITE_ROOT . '/app/Auth/Auth.php';
 require_once SUITE_ROOT . '/app/Projects/ProjectRepository.php';
+require_once SUITE_ROOT . '/app/Tenancy/CompanyRepository.php';
 require_once SUITE_ROOT . '/app/Modules/ModuleRegistry.php';
 require_once SUITE_ROOT . '/app/Modules/ProjectScope.php';
 require_once SUITE_ROOT . '/app/Modules/ModuleLinks.php';
@@ -79,6 +80,12 @@ function suite_projects(): ProjectRepository
 {
     static $projects;
     return $projects ??= new ProjectRepository();
+}
+
+function suite_companies(): \Suite\Tenancy\CompanyRepository
+{
+    static $companies;
+    return $companies ??= new \Suite\Tenancy\CompanyRepository();
 }
 
 function suite_modules(): ModuleRegistry

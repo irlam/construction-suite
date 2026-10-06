@@ -22,3 +22,6 @@ jobs:
         run: php tests/project-scope.php
       - name: Notifications permissions regression
         run: php tests/notifications.php
+
+      - name: Company tenancy regression
+        run: php tests/company-tenancy.php

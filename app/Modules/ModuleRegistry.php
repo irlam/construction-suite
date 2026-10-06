@@ -36,7 +36,15 @@ final class ModuleRegistry
     public function allForProject(string $role, ?int $projectId): array
     {
         $modules = $this->all($role);
-        if (!$projectId || !Connection::tableExists('project_modules')) {
+        // Legacy modules have independent account/data boundaries. Until an
+        // adapter is verified, only the platform owner may launch them here.
+        if ($role !== 'platform_admin') {
+            $modules = array_values(array_filter($modules, static fn(array $module): bool =>
+                ($module['tenant_isolated'] ?? false) === true
+            ));
+        }
+        if (!$projectId) return [];
+        if (!Connection::tableExists('project_modules')) {
             return $modules;
         }
 

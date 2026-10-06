@@ -34,7 +34,7 @@ foreach ($projects as $candidate) {
 $orgProjectCount = (int) $pdo->query(
     'SELECT COUNT(*) FROM projects p
      JOIN organizations o ON o.id = p.organization_id
-     WHERE p.active = 1 AND o.active = 1'
+     WHERE 1 = 1'
 )->fetchColumn();
 $definitions = suite_modules()->definitions();
 $references = suite_reference_client()->fetch($definitions);

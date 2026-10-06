@@ -21,7 +21,7 @@ $modules = suite_modules()->allForProject($role, $project ? (int) $project['id']
 $projectCount = (int) suite_db()->query(
     'SELECT COUNT(*) FROM projects p
      JOIN organizations o ON o.id = p.organization_id
-     WHERE p.active = 1 AND o.active = 1'
+     WHERE 1 = 1'
 )->fetchColumn();
 $modules = \Suite\Modules\ProjectScope::apply($modules, $projectCount);
 $summary = suite_summary_client()->fetch($modules);

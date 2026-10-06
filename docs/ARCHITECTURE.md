@@ -190,3 +190,11 @@ Expected direction once implementation begins:
 ```
 
 The exact structure may evolve after the first working hub, but tenant, auth and offline boundaries should remain explicit.
+
+## Company administration foundation (0.5.0)
+
+`CompanyRepository` resolves management authority from the authenticated user's active account, active company and organization-wide admin membership. Project admin is a separate role and cannot confer company authority. The platform owner can select every company. All project and membership mutations verify company ownership and use prepared queries; browser writes require CSRF.
+
+Company account creation is transactional: an invalid foreign project or role leaves no new user. Existing global accounts cannot be claimed by matching an email. Company administrators cannot edit global account credentials or assign company-admin/platform roles; those remain owner-controlled.
+
+Legacy external apps are not verified tenant adapters. `ModuleRegistry::allForProject` excludes them for non-platform roles unless a tested adapter is explicitly declared `tenant_isolated`. Accounts without a current project receive no tools. Static Suite shell caching contains no private server-rendered pages; downstream caches still require independent audits.

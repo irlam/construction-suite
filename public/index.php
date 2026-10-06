@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'selec
     exit;
 }
 
+$managedCompanies = suite_companies()->managedBy($user);
 $projectList = $projectsRepo->forUser($user);
 $project = $projectsRepo->currentForUser($user);
 $role = $projectsRepo->roleFor($user, $project);
@@ -27,7 +28,7 @@ $summaryConfigured = suite_summary_client()->configured();
 $activeProjectCount = (int) suite_db()->query(
     'SELECT COUNT(*) FROM projects p
      JOIN organizations o ON o.id = p.organization_id
-     WHERE p.active = 1 AND o.active = 1'
+     WHERE 1 = 1'
 )->fetchColumn();
 $scopeModules = \Suite\Modules\ProjectScope::apply($modules, $activeProjectCount);
 $kpiLinks = [];
@@ -82,6 +83,7 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
           <span><?= suite_e((string) $user['email']) ?></span>
           <span class="role-pill"><?= suite_e(str_replace('_', ' ', $role)) ?></span>
           <a href="/profile.php">My profile & password</a>
+          <?php if ($managedCompanies): ?><a href="/company/">Company dashboard</a><?php endif; ?>
           <?php if ($auth->isPlatformAdmin($user)): ?><a href="/admin/">Suite administration</a><?php endif; ?>
           <form method="post" action="/logout.php">
             <input type="hidden" name="csrf_token" value="<?= suite_e($auth->csrfToken()) ?>">
@@ -93,6 +95,9 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
   </header>
 
   <main class="app-shell">
+    <?php if (!$auth->isPlatformAdmin($user)): ?>
+    <div class="notice warning">Company and project access is active in the Suite. Connected tools will appear here once their company isolation has been verified.<?php if ($managedCompanies): ?> <a href="/company/">Manage company projects</a><?php endif; ?></div>
+    <?php endif; ?>
     <section class="project-strip">
       <div>
         <p class="eyebrow"><?= suite_e((string) $organizationName) ?></p>
@@ -107,7 +112,7 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
           <select id="project_id" name="project_id" onchange="this.form.submit()">
             <?php foreach ($projectList as $item): ?>
               <option value="<?= (int) $item['id'] ?>" <?= (int) ($project['id'] ?? 0) === (int) $item['id'] ? 'selected' : '' ?>>
-                <?= suite_e((string) $item['name']) ?>
+                <?= suite_e((string) $item['organization_name']) ?> · <?= suite_e((string) $item['name']) ?>
               </option>
             <?php endforeach; ?>
           </select>

@@ -80,7 +80,8 @@ final class ProjectRepository
             'SELECT role_key FROM memberships
              WHERE user_id = ? AND organization_id = ?
                AND (project_id = ? OR project_id IS NULL)
-             ORDER BY CASE WHEN project_id = ? THEN 0 ELSE 1 END
+             ORDER BY CASE WHEN project_id IS NULL AND role_key IN (\'company_admin\', \'admin\') THEN 0
+                           WHEN project_id = ? THEN 1 ELSE 2 END, id
              LIMIT 1'
         );
         $stmt->execute([
@@ -90,6 +91,7 @@ final class ProjectRepository
             (int) $project['id'],
         ]);
 
-        return (string) ($stmt->fetchColumn() ?: 'user');
+        $role = (string) ($stmt->fetchColumn() ?: 'user');
+        return $role === 'company_admin' ? 'admin' : $role;
     }
 }
