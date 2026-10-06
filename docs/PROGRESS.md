@@ -53,3 +53,6 @@ The isolated-instance branch now adds opaque, hashed eight-hour tool sessions, s
 The agreed product remains the central multi-company Construction Suite: platform administration → company dashboard → project dashboard → verified modules. Programme Alpha/Beta are integration fixtures for one module, not the platform itself.
 
 Added company branding and protected raster logos, company project tool preferences that cannot widen platform permissions, and real HTTP regression coverage. Preference changes participate in module handoff/session authorization. New tables use migration 004. Production has not received this checkpoint. Connected tool/PDF branding, live instance/database setup, full eight-module isolation and recovery verification remain pending.
+
+
+Company administration, MySQL gateway concurrency, cross-product regressions and sampled public HTTPS guards now pass. See MODULE-VERIFICATION.md for exact checkpoint/run references and remaining gaps. Draft PR #2 contains the staged changes; they are not merged or deployed.

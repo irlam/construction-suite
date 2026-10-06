@@ -32,8 +32,8 @@ Keep the existing private inventory readiness flags false until end-to-end hosti
 - `python3 tests/company-http.py`: disposable server/database, actual login, multipart upload, CSRF, company/project forgery, authenticated logo access, dashboard branding and deactivation.
 - `php tests/module-handoff.php`: existing opaque sessions and new launches respect company tool preferences, alongside audience, expiry, replay and revocation checks.
 - Existing bootstrap, company-tenancy, project-scope and notifications regressions remain required.
-- CI also runs company controls on an empty disposable MySQL 8.4 database. Its fixture credentials are unrelated to production.
+- CI also runs company controls on an empty disposable MySQL 8.4 database and gateway tests with concurrent redemption, transaction rollback and fresh permission checks. Its fixture credentials are unrelated to production.
 
 ## Remaining complete-platform work
 
-The shared project hub and administration are foundations, not certification that every module is tenant-safe. Complete module deployment, fresh permission enforcement on every operation, project-owned uploads, tenant-specific PDF/export paths, offline storage separation, notification ownership and recovery drills before admitting independent customers. Invitations/email delivery and client read-only roles are not yet implemented by this checkpoint.
+The shared project hub and administration are foundations, not certification that every module is tenant-safe. Complete module deployment, fresh permission enforcement on every operation, project-owned uploads, tenant-specific PDF/export paths, offline storage separation, notification ownership and recovery drills before admitting independent customers. Invitations/email delivery and client read-only roles are not yet implemented by this checkpoint. MySQL gateway concurrency is tested in disposable CI; production-host and complete two-instance user workflows still need verification.
