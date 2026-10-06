@@ -10,6 +10,7 @@ try {
  $db->exec(file_get_contents(SUITE_ROOT.'/database/migrations/001_project_modules.sqlite.sql'));
  $db->exec(file_get_contents(SUITE_ROOT.'/database/migrations/002_module_handoffs.sqlite.sql'));
  $db->exec(file_get_contents(SUITE_ROOT.'/database/migrations/002_module_handoffs.sqlite.sql'));
+ $db->exec(file_get_contents(SUITE_ROOT.'/database/migrations/003_module_sessions.sqlite.sql'));
  $db->exec("INSERT INTO organizations(id,name,slug) VALUES(1,'Alpha','alpha'),(2,'Beta','beta')");
  $db->exec("INSERT INTO projects(id,organization_id,name) VALUES(1,1,'Alpha One'),(2,2,'Beta One')");
  $db->exec("INSERT INTO users(id,email,name,password_hash,is_platform_admin) VALUES(1,'owner@example.test','Owner','unused',1),(2,'worker@example.test','Worker','unused',0)");
@@ -31,6 +32,24 @@ try {
  $deny(fn()=>$handoff->redeem(2,$code,$state,$key,101),'Wrong audience denied');
  $identity=$handoff->redeem(1,$code,$state,$key,101);$check($identity['project_id']===1&&$identity['user_id']===2,'Scoped identity');
  $deny(fn()=>$handoff->redeem(1,$code,$state,$key,101),'Replay denied');
+ $sessions=new \Suite\Auth\ModuleSession(new InstanceCatalog([$item,$other]));
+ $token=$identity['session_token'];
+ $check($sessions->validate(1,$token,$key,102)['user_id']===2,'Issued session validates');
+ $deny(fn()=>$sessions->validate(1,$token,'wrong',102),'Session wrong key denied');
+ $deny(fn()=>$sessions->validate(2,$token,$key,102),'Session foreign instance denied');
+ $deny(fn()=>$sessions->validate(1,$token,$key,28901),'Absolute session expiry enforced');
+ $check($db->query('SELECT token_hash FROM module_sessions')->fetchColumn()===hash('sha256',$token),'Session token stored hashed');
+ $db->exec("UPDATE memberships SET role_key='site_manager' WHERE user_id=2");
+ $check($sessions->validate(1,$token,$key,102)['role']==='site_manager','Session uses current role');
+ $db->exec('DELETE FROM memberships WHERE user_id=2');
+ $deny(fn()=>$sessions->validate(1,$token,$key,102),'Existing session membership revocation denied');
+ $db->exec("INSERT INTO memberships(user_id,organization_id,project_id,role_key) VALUES(2,1,1,'user')");
+ $db->exec('UPDATE organizations SET active=0 WHERE id=1');
+ $deny(fn()=>$sessions->validate(1,$token,$key,102),'Existing session inactive company denied');
+ $db->exec('UPDATE organizations SET active=1 WHERE id=1');
+ $sessions->revoke(1,$token,$key,102);
+ $deny(fn()=>$sessions->validate(1,$token,$key,102),'Logout revokes existing session');
+
  $code=$handoff->issue($worker,1,$state,100);$deny(fn()=>$handoff->redeem(1,$code,$state,$key,161),'Expired grant denied');
  $code=$handoff->issue($owner,1,$state,100);$rebound=$item;$rebound['origin']='https://replacement.sitepermits.site';
  $deny(fn()=>(new ModuleHandoff(new InstanceCatalog([$rebound])))->redeem(1,$code,$state,$key,101),'Inventory rebind denied');
@@ -43,5 +62,23 @@ try {
  $db->exec("INSERT INTO project_modules(project_id,module_key,enabled) VALUES(1,'permits',0)");
  $deny(fn()=>$handoff->redeem(1,$code,$state,$key,101),'Disabled tool denied');
  $check($db->query("SELECT code_hash FROM module_handoffs WHERE code_hash='".hash('sha256',$code)."' AND used_at IS NULL")->fetchColumn()!==false,'Denied redemption does not consume grant');
- echo "PASS: Origin isolation, short-lived single-use handoffs, browser state, audience binding and current access checks.\n";
+ $db->exec("UPDATE project_modules SET enabled=1 WHERE project_id=1 AND module_key='permits'");
+ $code=$handoff->issue($worker,1,$state,100);
+ $db->exec('ALTER TABLE module_sessions RENAME TO unavailable_module_sessions');
+ $deny(fn()=>$handoff->redeem(1,$code,$state,$key,101),'Session storage failure denied');
+ $check($db->query("SELECT used_at FROM module_handoffs WHERE code_hash='".hash('sha256',$code)."'")->fetchColumn()===null,'Session storage failure rolls code consumption back');
+ $db->exec('ALTER TABLE unavailable_module_sessions RENAME TO module_sessions');
+ $identity=$handoff->redeem(1,$code,$state,$key,101);
+ $rebound=$item;$rebound['origin']='https://replacement.sitepermits.site';
+ $deny(fn()=>(new \Suite\Auth\ModuleSession(new InstanceCatalog([$rebound])))->validate(1,$identity['session_token'],$key,102),'Active session inventory rebind denied');
+ $ownerSession=$sessions->issue($owner,1,101);
+ $workerSession=$sessions->issue($worker,1,101);
+ $pending=$handoff->issue($worker,1,$state,100);
+ $_SESSION['suite_user_id']=2;
+ suite_auth()->logout();
+ $check(!isset($_SESSION['suite_user_id']),'Suite logout clears local identity');
+ $deny(fn()=>$sessions->validate(1,$workerSession['session_token'],$key,102),'Suite logout revokes connected tool sessions');
+ $deny(fn()=>$handoff->redeem(1,$pending,$state,$key,101),'Suite logout cancels pending handoff');
+ $check($sessions->validate(1,$ownerSession['session_token'],$key,102)['user_id']===1,'Logout leaves other user sessions intact');
+ echo "PASS: Origin isolation, short-lived single-use handoffs, browser state, audience binding current access checks, revocable app sessions and transactional issuance.\n";
 } finally {@unlink($path);}

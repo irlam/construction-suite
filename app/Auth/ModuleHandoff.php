@@ -73,14 +73,18 @@ final class ModuleHandoff
         $user = $stmt->fetch();
         if (!$user) throw new RuntimeException('Access denied.');
         $context = $this->authorize($user, $instanceId);
-        // The conditional write prevents two concurrent callbacks from redeeming
-        // the same grant; validation failures never burn another browser's code.
-        $consume = $pdo->prepare('UPDATE module_handoffs SET used_at = ? WHERE code_hash = ? AND instance_id = ? AND used_at IS NULL AND expires_at >= ?');
-        $consume->execute([$now, $grant['code_hash'], $instanceId, $now]);
-        if ($consume->rowCount() !== 1) throw new RuntimeException('Access denied.');
-        return ['user_id' => (int) $user['id'], 'name' => $user['name'], 'email' => $user['email'],
-            'organization_id' => $instance['organization_id'], 'project_id' => $instance['project_id'],
-            'instance_id' => $instanceId, 'module_key' => $instance['module_key'], 'role' => $context['role'],
-            'issued_at' => $now];
+        // Consume the code and create the opaque app session atomically.
+        $pdo->beginTransaction();
+        try {
+            $consume = $pdo->prepare('UPDATE module_handoffs SET used_at = ? WHERE code_hash = ? AND instance_id = ? AND used_at IS NULL AND expires_at >= ?');
+            $consume->execute([$now, $grant['code_hash'], $instanceId, $now]);
+            if ($consume->rowCount() !== 1) throw new RuntimeException('Access denied.');
+            $identity = (new ModuleSession($this->catalog))->issue($user, $instanceId, $now);
+            $pdo->commit();
+            return $identity;
+        } catch (\Throwable $e) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $e;
+        }
     }
 }
