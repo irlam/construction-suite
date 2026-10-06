@@ -2,7 +2,7 @@ name: Cross-product regression audit
 
 on:
   push:
-    branches: [main]
+    branches: [main, work/company-admin-controls]
   workflow_dispatch:
   schedule:
     - cron: '17 4 * * *'
@@ -35,15 +35,32 @@ jobs:
         with:
           repository: irlam/permits
           path: permits-source
+      - uses: actions/checkout@v4
+        with:
+          repository: irlam/programme
+          ref: 4e9d7d6c41d03773c7958dfd6141a5d3fcd7204d
+          path: programme-source
+      - uses: actions/checkout@v4
+        with:
+          repository: irlam/handover
+          path: handover-source
+      - uses: actions/checkout@v4
+        with:
+          repository: irlam/status
+          path: status-source
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: pdo, pdo_mysql, pdo_sqlite, mbstring, fileinfo, gd, curl
+          extensions: pdo, pdo_mysql, pdo_sqlite, mbstring, fileinfo, gd, curl, ctype
       - name: Suite syntax and permissions
         run: |
           php tests/bootstrap-smoke.php
           php tests/project-scope.php
           php tests/notifications.php
+          php tests/company-tenancy.php
+          php tests/company-settings.php
+          php tests/module-handoff.php
+          python3 tests/company-http.py
       - name: Delivery booking API contracts
         run: |
           php -l delivery-source/api/suite-summary.php
@@ -77,3 +94,20 @@ jobs:
         run: |
           npm ci
           npm test
+      - name: Programme isolated adapter and Excel scheduling regressions
+        working-directory: programme-source
+        run: |
+          php tests/private-config.php
+          php tests/suite-gateway.php
+          php tests/suite-user-map.php
+          php tests/suite-session.php
+          python3 tests/schedule_regression.py
+          python3 tests/maintenance-web-guards.py
+          python3 tests/suite-http.py
+          python3 tests/suite-package.py
+      - name: Handover entry points and application syntax
+        run: find handover-source/src handover-source/config handover-source/public handover-source/templates handover-source/scripts -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Status endpoint syntax
+        run: |
+          php -l status-source/api.php
+          php -l status-source/config.php

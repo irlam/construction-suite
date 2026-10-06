@@ -7,15 +7,23 @@ use Suite\Support\Env;
 
 final class SummaryClient
 {
-    public function configured(): bool
+    public function configured(array $modules = []): bool
     {
-        return strlen(trim((string) Env::get('SUITE_INTEGRATION_KEY', ''))) >= 32;
+        if (strlen(trim((string) Env::get('SUITE_INTEGRATION_KEY', ''))) >= 32) return true;
+        foreach ($modules as $module) {
+            if (!empty($module['integration_key_env']) && strlen((string) Env::get($module['integration_key_env'], '')) >= 32) return true;
+        }
+        return false;
     }
 
     public function fetch(array $modules): array
     {
         $key = trim((string) Env::get('SUITE_INTEGRATION_KEY', ''));
-        if (strlen($key) < 32) {
+        $hasKey = strlen($key) >= 32;
+        foreach ($modules as $module) {
+            if (!empty($module['integration_key_env']) && strlen((string) Env::get($module['integration_key_env'], '')) >= 32) $hasKey = true;
+        }
+        if (!$hasKey) {
             return [
                 'configured' => false,
                 'modules' => [],
@@ -70,11 +78,16 @@ final class SummaryClient
                 $summaryUrl .= $separator . rawurlencode($param) . '=' . rawurlencode($externalRef);
             }
 
+            $requestKey = !empty($module['integration_key_env']) ? (string) Env::get($module['integration_key_env'], '') : $key;
+            if (strlen($requestKey) < 32) {
+                $results[$moduleKey] = ['status' => 'not_configured', 'metrics' => []];
+                continue;
+            }
             $ch = curl_init();
             curl_setopt_array($ch, [
                 CURLOPT_URL => $summaryUrl,
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_FOLLOWLOCATION => false,
                 CURLOPT_MAXREDIRS => 2,
                 CURLOPT_CONNECTTIMEOUT => 2,
                 CURLOPT_TIMEOUT => 5,
@@ -83,7 +96,7 @@ final class SummaryClient
                 CURLOPT_USERAGENT => 'ConstructionSuite/0.3 Summary',
                 CURLOPT_HTTPHEADER => [
                     'Accept: application/json',
-                    'X-Construction-Suite-Key: ' . $key,
+                    'X-Construction-Suite-Key: ' . $requestKey,
                 ],
             ]);
 

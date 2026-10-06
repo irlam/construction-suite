@@ -80,12 +80,19 @@ final class Auth
 
     public function logout(): void
     {
-        unset(
-            $_SESSION['suite_user_id'],
-            $_SESSION['suite_signed_in_at'],
-            $_SESSION['suite_project_id'],
-            $_SESSION['suite_csrf']
-        );
+        $id = (int) ($_SESSION['suite_user_id'] ?? 0);
+        try {
+            if ($id > 0 && Connection::tableExists('module_sessions')) {
+                $stmt = Connection::pdo()->prepare('UPDATE module_sessions SET revoked_at = ? WHERE user_id = ? AND revoked_at IS NULL');
+                $stmt->execute([time(), $id]);
+            }
+            if ($id > 0 && Connection::tableExists('module_handoffs')) {
+                $stmt = Connection::pdo()->prepare('DELETE FROM module_handoffs WHERE user_id = ? AND used_at IS NULL');
+                $stmt->execute([$id]);
+            }
+        } finally {
+            unset($_SESSION['suite_user_id'], $_SESSION['suite_signed_in_at'], $_SESSION['suite_project_id'], $_SESSION['suite_csrf']);
+        }
     }
 
     public function isPlatformAdmin(?array $user = null): bool

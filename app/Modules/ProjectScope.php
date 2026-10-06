@@ -17,7 +17,7 @@ final class ProjectScope
         }
 
         foreach ($modules as &$module) {
-            if (empty($module['summary_url'])) {
+            if (!empty($module['single_project_instance']) || empty($module['summary_url'])) {
                 continue;
             }
 

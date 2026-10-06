@@ -22,7 +22,7 @@ $projectList = $projectsRepo->forUser($user);
 $project = $projectsRepo->currentForUser($user);
 $role = $projectsRepo->roleFor($user, $project);
 $modules = suite_modules()->allForProject($role, $project ? (int) $project['id'] : null);
-$summaryConfigured = suite_summary_client()->configured();
+$summaryConfigured = suite_summary_client()->configured($modules);
 
 // Build click-through links from the same isolation rules used by the API.
 $activeProjectCount = (int) suite_db()->query(
@@ -46,6 +46,8 @@ $notificationCount = \Suite\Support\Notifications::count(
 $firstName = trim(explode(' ', trim((string) $user['name']))[0] ?? 'there');
 $projectName = $project['name'] ?? 'No project assigned';
 $organizationName = $project['organization_name'] ?? 'Construction Suite';
+$companyBranding = $project ? suite_company_settings()->forCompany((int) $project['organization_id']) : null;
+header('Cache-Control: private, no-store');
 ?>
 <!doctype html>
 <html lang="en">
@@ -98,7 +100,8 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
     <?php if (!$auth->isPlatformAdmin($user)): ?>
     <div class="notice warning">Company and project access is active in the Suite. Connected tools will appear here once their company isolation has been verified.<?php if ($managedCompanies): ?> <a href="/company/">Manage company projects</a><?php endif; ?></div>
     <?php endif; ?>
-    <section class="project-strip">
+    <section class="project-strip" <?php if ($companyBranding): ?>style="border-left: 4px solid <?= suite_e($companyBranding['brand_colour']) ?>"<?php endif; ?>>
+      <?php if (!empty($companyBranding['has_logo'])): ?><img class="company-logo" src="/company/logo.php?company_id=<?= (int) $project['organization_id'] ?>" alt="<?= suite_e((string) $organizationName) ?> logo"><?php endif; ?>
       <div>
         <p class="eyebrow"><?= suite_e((string) $organizationName) ?></p>
         <h1>Good <?= date('G') < 12 ? 'morning' : (date('G') < 18 ? 'afternoon' : 'evening') ?>, <?= suite_e($firstName) ?></h1>
@@ -188,7 +191,7 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
     <section class="module-grid" id="modules">
       <?php foreach ($modules as $module): ?>
         <a class="module-card accent-<?= suite_e((string) $module['accent']) ?>"
-           href="<?= suite_e((string) $module['url']) ?>"
+           href="<?= suite_e((string) ($module['launch_url'] ?? $module['url'])) ?>"
            target="_blank" rel="noopener">
           <span class="module-icon"><svg><use href="/assets/icons.svg#<?= suite_e((string) $module['icon']) ?>"></use></svg></span>
           <span class="module-arrow"><svg><use href="/assets/icons.svg#arrow"></use></svg></span>

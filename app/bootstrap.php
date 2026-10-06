@@ -19,7 +19,11 @@ require_once SUITE_ROOT . '/app/Database/Migrator.php';
 require_once SUITE_ROOT . '/app/Auth/Auth.php';
 require_once SUITE_ROOT . '/app/Projects/ProjectRepository.php';
 require_once SUITE_ROOT . '/app/Tenancy/CompanyRepository.php';
+require_once SUITE_ROOT . '/app/Tenancy/CompanySettings.php';
 require_once SUITE_ROOT . '/app/Modules/ModuleRegistry.php';
+require_once SUITE_ROOT . '/app/Modules/InstanceCatalog.php';
+require_once SUITE_ROOT . '/app/Auth/ModuleHandoff.php';
+require_once SUITE_ROOT . '/app/Auth/ModuleSession.php';
 require_once SUITE_ROOT . '/app/Modules/ProjectScope.php';
 require_once SUITE_ROOT . '/app/Modules/ModuleLinks.php';
 require_once SUITE_ROOT . '/app/Modules/ModuleHealth.php';
@@ -86,6 +90,24 @@ function suite_companies(): \Suite\Tenancy\CompanyRepository
 {
     static $companies;
     return $companies ??= new \Suite\Tenancy\CompanyRepository();
+}
+
+function suite_instances(): \Suite\Modules\InstanceCatalog
+{
+    static $catalog;
+    return $catalog ??= new \Suite\Modules\InstanceCatalog();
+}
+
+function suite_company_settings(): \Suite\Tenancy\CompanySettings
+{
+    static $settings;
+    return $settings ??= new \Suite\Tenancy\CompanySettings();
+}
+
+function suite_handoff(): \Suite\Auth\ModuleHandoff
+{
+    static $handoff;
+    return $handoff ??= new \Suite\Auth\ModuleHandoff(suite_instances());
 }
 
 function suite_modules(): ModuleRegistry

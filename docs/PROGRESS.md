@@ -28,3 +28,31 @@ Audit source modules for tenant boundaries and introduce identity handoff in a t
 Release commit 94fe456712f1bc029bc78589b98ca6b0fbc2f7c4 deployed through the existing automatic Plesk Git configuration. The live /company/ page renders the current company's projects and access controls. Original dashboard verified with all eight modules available and live summary values present. GitHub Suite checks, cross-product regression audit and public live-site integration audit all completed successfully.
 
 Public project documentation excludes private hosting identifiers; private recovery notes are kept separately. No production accounts, memberships or projects were created or modified during live verification.
+
+## Staged next phase (not deployed)
+
+Branch `work/tenant-handoff-foundation` contains the connected-tool source audit and Suite-side isolated-instance/handoff foundation. PHP syntax and all five local regression suites pass, including new tests for foreign project access, shared/invalid origins, unverified gateways, bad server keys, mismatched browser state/audience, replay, expiry, inventory rebinding, membership revocation, inactive users and disabled modules. Existing dashboard regressions pass.
+
+Plesk Git controls currently return 502 Bad Gateway / connection refused in the working browser, including a later recovery check. This prevents preservation of legacy live configuration and deployment verification. Configuration-loader replacement is deliberately held until the live values have been copied privately. Tested CLI migration helpers are published in Programme and Safety; server execution is not confirmed. Historical committed credentials still need owner-controlled rotation.
+
+Next: recover Plesk access; preserve private configuration with the CLI helpers; verify the file and application before publishing replacement loaders. Then implement one app-side gateway in an isolated staging instance and prove two-instance database/file/session/offline isolation before onboarding companies. Keep the Suite-side branch unmerged until those adapters and MySQL migration are reviewed and tested.
+
+## Hosting recovery and configuration repair
+
+Plesk access recovered and was securely reauthenticated. Programme's live configuration was preserved outside its web root, then migrated to an ignored owner-only runtime PHP file because the host's default open_basedir excludes outside-root private directories. Its direct-request guard returns 404; no broader file-access setting was selected. Programme's loader/runtime compatibility commit 57e405b3a6bb1c4e1e92c7501fe01d1d360f180d is deployed and the live workspace again loads activities. An initial loader deployment was blocked by open_basedir and corrected during this work.
+
+Safety configuration was independently preserved for the active installation and legacy installation, including original upload/bootstrap path binding. Protected runtime copies were installed before the active site's loader deployment. Safety release 6fbee8c01f5edd16defe3994f868af1a6df93b7c is deployed on the active site; its login page renders, and GitHub integration plus live-deployment audits pass. The legacy Git repository has no deployment target; its application was not upgraded. Historical credentials remain in Git history and require coordinated owner rotation.
+
+## Staged revocable sessions
+
+The isolated-instance branch now adds opaque, hashed eight-hour tool sessions, server-authenticated validation/revocation, current role/access checks on each validation, and global Suite logout revoking connected sessions plus pending handoffs. Code consumption and session creation are transactional. Local tests prove existing-session revocation, inactive companies, foreign audiences, role changes, expiry, inventory rebinding, storage-failure rollback and isolation between users during logout. These changes remain staging-only; no app adapter or instance has been enabled, and MySQL/concurrent-request verification is still required.
+
+
+## 6 October 2026 — Company administration source checkpoint
+
+The agreed product remains the central multi-company Construction Suite: platform administration → company dashboard → project dashboard → verified modules. Programme Alpha/Beta are integration fixtures for one module, not the platform itself.
+
+Added company branding and protected raster logos, company project tool preferences that cannot widen platform permissions, and real HTTP regression coverage. Preference changes participate in module handoff/session authorization. New tables use migration 004. Production has not received this checkpoint. Connected tool/PDF branding, live instance/database setup, full eight-module isolation and recovery verification remain pending.
+
+
+Company administration, MySQL gateway concurrency, cross-product regressions and sampled public HTTPS guards now pass. See MODULE-VERIFICATION.md for exact checkpoint/run references and remaining gaps. Draft PR #2 contains the staged changes; they are not merged or deployed.

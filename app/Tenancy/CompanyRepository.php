@@ -9,6 +9,79 @@ use RuntimeException;
 /** Company-level authority is separate from a project administrator role. */
 final class CompanyRepository
 {
+    public function projectModules(array $user, int $companyId, int $projectId): array
+    {
+        $this->requireProject($user, $companyId, $projectId);
+        $platform = [];
+        if (Connection::tableExists('project_modules')) {
+            $stmt = Connection::pdo()->prepare('SELECT module_key, enabled FROM project_modules WHERE project_id = ?');
+            $stmt->execute([$projectId]);
+            foreach ($stmt->fetchAll() as $row) $platform[$row['module_key']] = (bool) $row['enabled'];
+        }
+        $choices = [];
+        if (Connection::tableExists('company_project_modules')) {
+            $stmt = Connection::pdo()->prepare('SELECT module_key, enabled FROM company_project_modules WHERE project_id = ?');
+            $stmt->execute([$projectId]);
+            foreach ($stmt->fetchAll() as $row) $choices[$row['module_key']] = (bool) $row['enabled'];
+        }
+        $result = [];
+        foreach (suite_modules()->definitions() as $module) {
+            $key = (string) $module['key'];
+            $module['permitted'] = !empty($module['enabled']) && ($platform[$key] ?? true);
+            $module['selected'] = $choices[$key] ?? true;
+            $result[] = $module;
+        }
+        return $result;
+    }
+
+    public function saveProjectModules(array $user, int $companyId, int $projectId, array $enabled): void
+    {
+        $project = $this->requireProject($user, $companyId, $projectId);
+        $company = $this->requireCompany($user, $companyId);
+        if (empty($company['active']) || empty($project['active'])) throw new RuntimeException('Activate the company and project before changing tools.');
+        if (!Connection::tableExists('company_project_modules')) throw new RuntimeException('The platform owner must apply the company settings migration first.');
+        $modules = $this->projectModules($user, $companyId, $projectId);
+        $known = array_column($modules, 'key');
+        foreach ($enabled as $key) {
+            if (!is_string($key) || !in_array($key, $known, true)) throw new RuntimeException('Choose a valid project tool.');
+        }
+        $pdo = Connection::pdo();
+        $pdo->beginTransaction();
+        try {
+            foreach ($modules as $module) {
+                $key = $module['key'];
+                // A company preference can only narrow platform access. It never
+                // changes integration mappings, credentials or readiness flags.
+                if (!$module['permitted'] && in_array($key, $enabled, true)) throw new RuntimeException('This tool is not enabled by the platform owner.');
+                $selected = in_array($key, $enabled, true) ? 1 : 0;
+                $find = $pdo->prepare('SELECT module_key FROM company_project_modules WHERE project_id = ? AND module_key = ?');
+                $find->execute([$projectId, $key]);
+                if ($find->fetchColumn()) {
+                    $stmt = $pdo->prepare('UPDATE company_project_modules SET enabled = ?, updated_at = CURRENT_TIMESTAMP WHERE project_id = ? AND module_key = ?');
+                    $stmt->execute([$selected, $projectId, $key]);
+                } else {
+                    $stmt = $pdo->prepare('INSERT INTO company_project_modules (project_id, module_key, enabled) VALUES (?, ?, ?)');
+                    $stmt->execute([$projectId, $key, $selected]);
+                }
+            }
+            Audit::record('company.project_tools_saved', (int) $user['id'], $companyId, $projectId);
+            $pdo->commit();
+        } catch (\Throwable $e) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $e;
+        }
+    }
+
+    private function requireProject(array $user, int $companyId, int $projectId): array
+    {
+        $this->requireCompany($user, $companyId);
+        $stmt = Connection::pdo()->prepare('SELECT id, active FROM projects WHERE id = ? AND organization_id = ?');
+        $stmt->execute([$projectId, $companyId]);
+        $project = $stmt->fetch();
+        if (!$project) throw new RuntimeException('Project access denied.');
+        return $project;
+    }
+
     public function managedBy(array $user): array
     {
         if (empty($user['active'])) return [];
