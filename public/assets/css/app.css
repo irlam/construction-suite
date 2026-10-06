@@ -164,3 +164,10 @@ code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;bac
 
 .mapping-note,.mapping-warning{display:block;font-size:.7rem;line-height:1.4;margin-top:.15rem;font-weight:600}
 .mapping-note{color:#667085}.mapping-warning{color:#b54708}
+
+/* Company administration */
+.company-tabs{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 24px;padding:12px 0}
+.company-tabs a{padding:10px 14px;border:1px solid #dbe2ea;border-radius:10px;text-decoration:none}
+.company-logo{display:block;width:140px;max-height:90px;object-fit:contain;margin:0 0 16px}
+.project-strip .company-logo{width:110px;margin:0}
+.admin-panel{scroll-margin-top:90px}

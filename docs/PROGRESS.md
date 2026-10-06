@@ -46,3 +46,10 @@ Safety configuration was independently preserved for the active installation and
 ## Staged revocable sessions
 
 The isolated-instance branch now adds opaque, hashed eight-hour tool sessions, server-authenticated validation/revocation, current role/access checks on each validation, and global Suite logout revoking connected sessions plus pending handoffs. Code consumption and session creation are transactional. Local tests prove existing-session revocation, inactive companies, foreign audiences, role changes, expiry, inventory rebinding, storage-failure rollback and isolation between users during logout. These changes remain staging-only; no app adapter or instance has been enabled, and MySQL/concurrent-request verification is still required.
+
+
+## 6 October 2026 — Company administration source checkpoint
+
+The agreed product remains the central multi-company Construction Suite: platform administration → company dashboard → project dashboard → verified modules. Programme Alpha/Beta are integration fixtures for one module, not the platform itself.
+
+Added company branding and protected raster logos, company project tool preferences that cannot widen platform permissions, and real HTTP regression coverage. Preference changes participate in module handoff/session authorization. New tables use migration 004. Production has not received this checkpoint. Connected tool/PDF branding, live instance/database setup, full eight-module isolation and recovery verification remain pending.

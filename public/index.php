@@ -46,6 +46,8 @@ $notificationCount = \Suite\Support\Notifications::count(
 $firstName = trim(explode(' ', trim((string) $user['name']))[0] ?? 'there');
 $projectName = $project['name'] ?? 'No project assigned';
 $organizationName = $project['organization_name'] ?? 'Construction Suite';
+$companyBranding = $project ? suite_company_settings()->forCompany((int) $project['organization_id']) : null;
+header('Cache-Control: private, no-store');
 ?>
 <!doctype html>
 <html lang="en">
@@ -98,7 +100,8 @@ $organizationName = $project['organization_name'] ?? 'Construction Suite';
     <?php if (!$auth->isPlatformAdmin($user)): ?>
     <div class="notice warning">Company and project access is active in the Suite. Connected tools will appear here once their company isolation has been verified.<?php if ($managedCompanies): ?> <a href="/company/">Manage company projects</a><?php endif; ?></div>
     <?php endif; ?>
-    <section class="project-strip">
+    <section class="project-strip" <?php if ($companyBranding): ?>style="border-left: 4px solid <?= suite_e($companyBranding['brand_colour']) ?>"<?php endif; ?>>
+      <?php if (!empty($companyBranding['has_logo'])): ?><img class="company-logo" src="/company/logo.php?company_id=<?= (int) $project['organization_id'] ?>" alt="<?= suite_e((string) $organizationName) ?> logo"><?php endif; ?>
       <div>
         <p class="eyebrow"><?= suite_e((string) $organizationName) ?></p>
         <h1>Good <?= date('G') < 12 ? 'morning' : (date('G') < 18 ? 'afternoon' : 'evening') ?>, <?= suite_e($firstName) ?></h1>

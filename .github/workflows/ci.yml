@@ -2,7 +2,7 @@ name: Construction Suite checks
 
 on:
   push:
-    branches: [main, work/tenant-handoff-foundation]
+    branches: [main, work/tenant-handoff-foundation, work/company-admin-controls]
   pull_request:
 
 jobs:
@@ -26,5 +26,40 @@ jobs:
       - name: Company tenancy regression
         run: php tests/company-tenancy.php
 
+      - name: Company settings and tool preferences regression
+        run: php tests/company-settings.php
+
+      - name: Company administration HTTP workflow
+        run: python3 tests/company-http.py
+
       - name: Module handoff security regression
         run: php tests/module-handoff.php
+
+  mysql-company-controls:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: fixture-only-password
+          MYSQL_DATABASE: suite_test_company_controls
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -pfixture-only-password"
+          --health-interval=10s --health-timeout=5s --health-retries=12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_mysql
+      - name: Company controls on MySQL 8.4
+        env:
+          SUITE_TEST_MYSQL: '1'
+          DB_DRIVER: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: '3306'
+          DB_DATABASE: suite_test_company_controls
+          DB_USERNAME: root
+          DB_PASSWORD: fixture-only-password
+        run: php tests/company-settings.php

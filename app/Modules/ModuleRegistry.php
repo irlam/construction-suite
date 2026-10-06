@@ -53,9 +53,17 @@ final class ModuleRegistry
         }
 
         $result = [];
+        $companyChoices = [];
+        if (Connection::tableExists('company_project_modules')) {
+            $choices = Connection::pdo()->prepare('SELECT module_key, enabled FROM company_project_modules WHERE project_id = ?');
+            $choices->execute([$projectId]);
+            foreach ($choices->fetchAll() as $choice) $companyChoices[(string) $choice['module_key']] = (bool) $choice['enabled'];
+        }
         foreach ($modules as $module) {
             $key = (string) $module['key'];
             $setting = $settings[$key] ?? null;
+
+            if (isset($companyChoices[$key]) && !$companyChoices[$key]) continue;
 
             if ($setting && !(bool) $setting['enabled']) {
                 continue;

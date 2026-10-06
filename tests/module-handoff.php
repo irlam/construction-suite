@@ -11,6 +11,7 @@ try {
  $db->exec(file_get_contents(SUITE_ROOT.'/database/migrations/002_module_handoffs.sqlite.sql'));
  $db->exec(file_get_contents(SUITE_ROOT.'/database/migrations/002_module_handoffs.sqlite.sql'));
  $db->exec(file_get_contents(SUITE_ROOT.'/database/migrations/003_module_sessions.sqlite.sql'));
+ $db->exec(file_get_contents(SUITE_ROOT.'/database/migrations/004_company_settings.sqlite.sql'));
  $db->exec("INSERT INTO organizations(id,name,slug) VALUES(1,'Alpha','alpha'),(2,'Beta','beta')");
  $db->exec("INSERT INTO projects(id,organization_id,name) VALUES(1,1,'Alpha One'),(2,2,'Beta One')");
  $db->exec("INSERT INTO users(id,email,name,password_hash,is_platform_admin) VALUES(1,'owner@example.test','Owner','unused',1),(2,'worker@example.test','Worker','unused',0)");
@@ -35,6 +36,10 @@ try {
  $sessions=new \Suite\Auth\ModuleSession(new InstanceCatalog([$item,$other]));
  $token=$identity['session_token'];
  $check($sessions->validate(1,$token,$key,102)['user_id']===2,'Issued session validates');
+ $db->exec("INSERT INTO company_project_modules(project_id,module_key,enabled) VALUES(1,'permits',0)");
+ $deny(fn()=>$sessions->validate(1,$token,$key,102),'Company tool preference revokes existing session');
+ $deny(fn()=>$handoff->issue($worker,1,$state,102),'Company tool preference blocks new launch');
+ $db->exec("UPDATE company_project_modules SET enabled=1 WHERE project_id=1 AND module_key='permits'");
  $deny(fn()=>$sessions->validate(1,$token,'wrong',102),'Session wrong key denied');
  $deny(fn()=>$sessions->validate(2,$token,$key,102),'Session foreign instance denied');
  $deny(fn()=>$sessions->validate(1,$token,$key,28901),'Absolute session expiry enforced');
