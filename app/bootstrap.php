@@ -20,6 +20,7 @@ require_once SUITE_ROOT . '/app/Auth/Auth.php';
 require_once SUITE_ROOT . '/app/Projects/ProjectRepository.php';
 require_once SUITE_ROOT . '/app/Tenancy/CompanyRepository.php';
 require_once SUITE_ROOT . '/app/Tenancy/CompanySettings.php';
+require_once SUITE_ROOT . '/app/Tenancy/CompanyInvitations.php';
 require_once SUITE_ROOT . '/app/Modules/ModuleRegistry.php';
 require_once SUITE_ROOT . '/app/Modules/InstanceCatalog.php';
 require_once SUITE_ROOT . '/app/Auth/ModuleHandoff.php';
@@ -102,6 +103,12 @@ function suite_company_settings(): \Suite\Tenancy\CompanySettings
 {
     static $settings;
     return $settings ??= new \Suite\Tenancy\CompanySettings();
+}
+
+function suite_invitations(): \Suite\Tenancy\CompanyInvitations
+{
+    static $invitations;
+    return $invitations ??= new \Suite\Tenancy\CompanyInvitations();
 }
 
 function suite_handoff(): \Suite\Auth\ModuleHandoff
