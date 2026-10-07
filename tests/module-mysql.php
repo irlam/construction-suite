@@ -69,6 +69,8 @@ try {
 $identity=$handoff->redeem(1,$code,$state,$key);$token=$identity['session_token'];
 $check($sessions->validate(1,$token,$key)['user_id']===1,'Recovered grant yields a valid session');
 $deny(fn()=>$sessions->validate(2,$token,$key),'Other company cannot validate session');
+$db->exec("UPDATE memberships SET role_key='viewer' WHERE user_id=1");
+$check($sessions->validate(1,$token,$key)['role']==='viewer','Current viewer downgrade refreshed on MySQL');
 $db->exec("UPDATE memberships SET role_key='site_manager' WHERE user_id=1");
 $check($sessions->validate(1,$token,$key)['role']==='site_manager','Current role refreshed on MySQL');
 $db->exec("INSERT INTO company_project_modules(project_id,module_key,enabled) VALUES(1,'permits',0)");

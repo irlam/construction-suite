@@ -15,7 +15,7 @@ if (!$auth->isPlatformAdmin($currentUser)) {
 $pdo = suite_db();
 $message = null;
 $error = null;
-$allowedRoles = ['admin', 'manager', 'site_manager', 'user', 'contractor'];
+$allowedRoles = ['admin', 'manager', 'site_manager', 'user', 'contractor', 'viewer'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$auth->verifyCsrf($_POST['csrf_token'] ?? null)) {

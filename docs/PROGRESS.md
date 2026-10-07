@@ -56,3 +56,12 @@ Added company branding and protected raster logos, company project tool preferen
 
 
 Company administration, MySQL gateway concurrency, cross-product regressions and sampled public HTTPS guards now pass. See MODULE-VERIFICATION.md for exact checkpoint/run references and remaining gaps. Draft PR #2 contains the staged changes; they are not merged or deployed.
+
+
+## 7 October — Owner merged central administration; invitation workflow
+
+Chris merged PR2 into main at41e71f74616783fdd8d4e89c0da4ece76956399f (6Oct23:44UTC). Source, cross-product and public checks passed on the merged commit. A merge does not establish hosting deployment or that migration004 has been applied.
+
+Continued independently from that exact main checkpoint, adding explicit recipient-accepted company/project invitations with seven-day one-use tokens, owner-controlled roles, existing-account proof and revocation. No invitations sent and no private hosting settings changed. See COMPANY-INVITATIONS.md.
+
+Added the viewer membership role for company or assigned-project clients. Invitations and administration forms support it; company management remains restricted. The matching Programme adapter enforces read-only requests against a fresh Suite identity. Other module adapters and hosted verification remain pending.

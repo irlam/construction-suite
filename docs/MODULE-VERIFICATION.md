@@ -1,10 +1,10 @@
-# Module verification — 6 October 2026
+# Module verification — 7 October 2026
 
 The product is the central multi-company Construction Suite. Existing modules are preserved and integrated behind company/project administration. Passing a regression or returning HTTP 200 is not certification that an application is ready for independent companies.
 
 ## Tested checkpoints
 
-Company controls, protected branding and project tool choices are on `work/company-admin-controls`. Gateway SQL and real concurrent code exchanges are exercised on disposable MySQL 8.4. Programme adapter checks use the immutable Programme source commit `4e9d7d6c41d03773c7958dfd6141a5d3fcd7204d`.
+Company controls, protected branding and project tool choices were merged through PR #2. Staff invitations and viewer memberships are staged in PR #3. Gateway SQL and real concurrent code exchanges are exercised on disposable MySQL 8.4. Programme adapter checks use the immutable Programme source commit `96c1daf81b22e127a5e3869238cea5ed426f8cc8`.
 
 | Module | Source checks in cross-product CI | Public check | Remaining tenant integration |
 | --- | --- | --- | --- |
@@ -25,8 +25,8 @@ For the Suite itself, bootstrap, notifications, company tenancy, project scoping
 - Gateway concurrency checkpoint `b06eb895057ef679ce9f774025e7a229f6a31a5b`, checks run 37535969722: success.
 - Expanded audit checkpoint `e2cf79cb70c7dd67071ec2ce41073d4cccb4649b`, checks run 37536134380, cross-product run 37536134417 and public-site run 37536134444: success.
 
-The new source remains a draft PR, not a deployed release. Existing customer-independent production sites continue on their earlier versions. No staging instance has been declared tenant-ready. Public probes use no login, private integration key or customer record. They verify sampled HTTP responses rather than content-level authorization.
+PR #2 is merged; invitations and viewer access remain draft PRs, not a deployed release. Existing customer-independent production sites continue on their earlier versions. No staging instance has been declared tenant-ready. Public probes use no login, private integration key or customer record. They verify sampled HTTP responses rather than content-level authorization.
 
 ## Next release gates
 
-Deploy Suite code and apply migration 004 after backup; configure private gateway inventory and instance keys securely; initialize dedicated module fixtures; verify two independent companies through real sign-in, permission changes, imports, exports, downloads, reports and offline reconnect. Then extend the same contract to the remaining modules. Complete invitations, read-only client roles, per-module PDF branding and production backup restoration before claiming the entire Suite finished.
+Deploy Suite code and apply migration 004 after backup; configure private gateway inventory and instance keys securely; initialize dedicated module fixtures; verify two independent companies through real sign-in, permission changes, imports, exports, downloads, reports and offline reconnect. Then extend the same contract to the remaining modules. Verify staged invitations and Programme read-only access, extend client restrictions into other modules, and complete per-module PDF branding and production backup restoration before claiming the entire Suite finished.

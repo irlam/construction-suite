@@ -14,7 +14,7 @@ if (!$auth->isPlatformAdmin($currentUser)) {
 
 $pdo = suite_db();
 $id = (int) ($_GET['id'] ?? $_POST['id'] ?? 0);
-$allowedRoles = ['admin', 'manager', 'site_manager', 'user', 'contractor'];
+$allowedRoles = ['admin', 'manager', 'site_manager', 'user', 'contractor', 'viewer'];
 
 $userStmt = $pdo->prepare(
     'SELECT id, name, email, active, is_platform_admin, last_login_at FROM users WHERE id = ?'

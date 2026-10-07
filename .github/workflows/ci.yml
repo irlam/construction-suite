@@ -2,7 +2,7 @@ name: Construction Suite checks
 
 on:
   push:
-    branches: [main, work/tenant-handoff-foundation, work/company-admin-controls]
+    branches: [main, work/tenant-handoff-foundation, work/company-admin-controls, work/company-invitations]
   pull_request:
 
 jobs:
@@ -29,6 +29,9 @@ jobs:
       - name: Company settings and tool preferences regression
         run: php tests/company-settings.php
 
+      - name: Company invitation boundaries
+        run: php tests/company-invitations.php
+
       - name: Company administration HTTP workflow
         run: python3 tests/company-http.py
 
@@ -43,6 +46,8 @@ jobs:
         include:
           - database: suite_test_company_controls
             script: tests/company-settings.php
+          - database: suite_test_company_invitations
+            script: tests/company-invitations.php
           - database: suite_test_module_gateway
             script: tests/module-mysql.php
     services:

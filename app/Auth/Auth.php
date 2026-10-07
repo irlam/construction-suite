@@ -91,7 +91,7 @@ final class Auth
                 $stmt->execute([$id]);
             }
         } finally {
-            unset($_SESSION['suite_user_id'], $_SESSION['suite_signed_in_at'], $_SESSION['suite_project_id'], $_SESSION['suite_csrf']);
+            unset($_SESSION['suite_user_id'], $_SESSION['suite_signed_in_at'], $_SESSION['suite_project_id'], $_SESSION['suite_csrf'], $_SESSION['suite_invitation_flash']);
         }
     }
 

@@ -156,7 +156,7 @@ final class CompanyRepository
         $company = $this->requireCompany($user, $companyId);
         if (empty($company['active'])) throw new RuntimeException('Activate the company before changing access.');
         $pdo = Connection::pdo();
-        $roles = $projectId === null ? ['company_admin', 'user'] : ['admin', 'manager', 'site_manager', 'user', 'contractor'];
+        $roles = $projectId === null ? ['company_admin', 'user', 'viewer'] : ['admin', 'manager', 'site_manager', 'user', 'contractor', 'viewer'];
         if (!in_array($role, $roles, true)) throw new RuntimeException('Choose a valid role for this scope.');
         // Company admins can only manage people already in their company. The
         // platform owner assigns the first company admin and cross-company users.
