@@ -137,6 +137,12 @@ with tempfile.TemporaryDirectory(prefix='suite-company-http-') as tmp:
             check(status==400 and db.execute('SELECT COUNT(*) FROM memberships WHERE user_id=2 AND organization_id=1').fetchone()[0]==0, 'Existing account cannot be adopted with wrong password')
             status,_,_=request(existing,'/invite.php',{'csrf_token':existing_csrf,'token':existing_token,'action':'accept','password':password})
             check(status==200 and db.execute('SELECT COUNT(*) FROM memberships WHERE user_id=2').fetchone()[0]==2, 'Existing account accepts with password while preserving old company access')
+            status,_,body=request(alpha,'/company/',dict(invite_values,email='client@example.test',role_key='viewer'))
+            viewer_token=re.search(rb'/invite.php#token=([a-f0-9]{64})',body)[1].decode()
+            viewer=client();_,_,page=request(viewer,'/invite.php')
+            status,_,page=request(viewer,'/invite.php',{'csrf_token':token(page),'token':viewer_token,'action':'accept','name':'Client','password':password})
+            check(status==200 and b'viewer' in page and b'Beta One' not in page, 'Read-only client lands on assigned project')
+            check(request(viewer,'/company/')[0]==403 and request(viewer,'/admin/')[0]==403, 'Client cannot administer company or platform')
             db.execute('UPDATE organizations SET active=0 WHERE id=1'); db.commit()
             check(request(alpha,'/company/')[0]==403 and request(worker,'/company/logo.php?company_id=1')[0]==404, 'Company deactivation removes dashboard and logo access')
         finally:

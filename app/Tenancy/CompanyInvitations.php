@@ -23,7 +23,7 @@ final class CompanyInvitations
     {
         $company=suite_companies()->requireCompany($author,$companyId);
         if (!$company['active']) throw new RuntimeException('Invitation unavailable.');
-        $allowed=$projectId===null ? ['user','company_admin'] : ['admin','manager','site_manager','user','contractor'];
+        $allowed=$projectId===null ? ['user','viewer','company_admin'] : ['admin','manager','site_manager','user','contractor','viewer'];
         if (!in_array($role,$allowed,true) || ($role==='company_admin' && empty($author['is_platform_admin']))) {
             throw new RuntimeException('Choose a role you can assign for this scope.');
         }

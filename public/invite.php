@@ -17,7 +17,10 @@ if (($_SERVER['REQUEST_METHOD']??'GET')==='POST') {
                 header('Location: /');exit;
             }
             $invite=suite_invitations()->preview($token);
-        } catch (RuntimeException $e) {http_response_code(400);$error=$e->getMessage();}
+        } catch (RuntimeException $e) {
+            http_response_code(400);$error=$e->getMessage();
+            try {$invite=suite_invitations()->preview($token);}catch(Throwable $ignored){}
+        }
         catch (Throwable $e) {http_response_code(400);$error='The invitation could not be accepted. Try again.';}
     }
 }
@@ -33,4 +36,4 @@ if (($_SERVER['REQUEST_METHOD']??'GET')==='POST') {
 <button class="button primary wide">Accept and open Suite</button></form>
 <?php else: ?>
 <p>Open the link your company administrator gave you, or paste its invitation code below.</p><form method="post" class="auth-form" id="invitation-preview"><input type="hidden" name="csrf_token" value="<?= suite_e($auth->csrfToken()) ?>"><input type="hidden" name="action" value="preview"><label>Invitation code<input name="token" id="invitation-token" maxlength="64" autocomplete="off" required></label><button class="button primary wide">Open invitation</button></form>
-<?php endif; ?><p><a href="/login.php">Suite sign in</a></p></section></main></body></html>
+<?php endif; ?><?php if ($currentUser): ?><form method="post" action="/logout.php"><input type="hidden" name="csrf_token" value="<?= suite_e($auth->csrfToken()) ?>"><button class="button secondary">Sign out to use another account</button></form><?php else: ?><p><a href="/login.php">Suite sign in</a></p><?php endif; ?></section></main></body></html>

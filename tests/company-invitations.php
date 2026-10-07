@@ -50,6 +50,10 @@ try {
  $check(count(suite_companies()->managedBy($user($admin)))===1,'Platform owner can invite company admin');
  $token=$repo->create($alpha,1,1,'disabled@example.test','user',$now);
  $db->exec('UPDATE organizations SET active=0 WHERE id=1');$deny(fn()=>$repo->preview($token),'Inactive company denied');
+ $viewerToken=$repo->create($beta,2,3,'client@example.test','viewer',$now);$viewerId=$repo->accept($viewerToken,null,'Read-only Client',$password,$now+1);
+ $viewer=$user($viewerId);$check(suite_projects()->roleFor($viewer,['id'=>3,'organization_id'=>2])==='viewer','Recipient gets read-only Suite role');
+ $check(suite_companies()->managedBy($viewer)===[],'Viewer cannot manage a company');
+ $check(array_column(suite_projects()->forUser($viewer),'id')==[3],'Viewer assigned project only');
  if ($mysql) {
   for($race=0;$race<3;$race++) {
    $email='race-'.$race.'@example.test';$token=$repo->create($owner,2,3,$email,'user');$workers=[];

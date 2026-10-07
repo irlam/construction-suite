@@ -26,3 +26,7 @@ Apply migration 005 after backup through the Suite migration runner. Until it ex
 `tests/company-http.py` exercises actual admin creation, one-time link display, CSRF, preview, new account acceptance, forged role/email/project fields, replay denial, rejected existing-account password and successful acceptance with the existing password. No real invitations are sent by these tests.
 
 The invitation UI/JS still requires a real mobile/desktop browser check after hosting deployment. Tenant module readiness is unchanged. Read-only client roles, automatic email delivery and full module isolation remain separate work.
+
+## Read-only clients
+
+Administrators can assign or invite the `viewer` role at company or project scope. A viewer sees only assigned Suite projects and cannot open company/platform administration. The staged Programme adapter maps this to a legacy commenter account plus an authoritative read-only flag refreshed from Suite on every request; the HTTP gate rejects all project mutations, including comments and imports, while allowing assigned-project reads and exports. Other modules must implement and verify equivalent enforcement before their instances are enabled for clients. This is not a claim that every existing module supports read-only users yet.
