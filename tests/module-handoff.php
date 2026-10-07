@@ -44,7 +44,9 @@ try {
  $deny(fn()=>$sessions->validate(2,$token,$key,102),'Session foreign instance denied');
  $deny(fn()=>$sessions->validate(1,$token,$key,28901),'Absolute session expiry enforced');
  $check($db->query('SELECT token_hash FROM module_sessions')->fetchColumn()===hash('sha256',$token),'Session token stored hashed');
- $db->exec("UPDATE memberships SET role_key='site_manager' WHERE user_id=2");
+ $db->exec("UPDATE memberships SET role_key='viewer' WHERE user_id=2");
+$check($sessions->validate(1,$token,$key,102)['role']==='viewer','Current viewer downgrade refreshed on SQLite');
+$db->exec("UPDATE memberships SET role_key='site_manager' WHERE user_id=2");
  $check($sessions->validate(1,$token,$key,102)['role']==='site_manager','Session uses current role');
  $db->exec('DELETE FROM memberships WHERE user_id=2');
  $deny(fn()=>$sessions->validate(1,$token,$key,102),'Existing session membership revocation denied');

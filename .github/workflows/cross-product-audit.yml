@@ -2,7 +2,7 @@ name: Cross-product regression audit
 
 on:
   push:
-    branches: [main, work/company-admin-controls]
+    branches: [main, work/company-admin-controls, work/company-invitations]
   workflow_dispatch:
   schedule:
     - cron: '17 4 * * *'
@@ -38,7 +38,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: irlam/programme
-          ref: 4e9d7d6c41d03773c7958dfd6141a5d3fcd7204d
+          ref: 96c1daf81b22e127a5e3869238cea5ed426f8cc8
           path: programme-source
       - uses: actions/checkout@v4
         with:
@@ -59,6 +59,7 @@ jobs:
           php tests/notifications.php
           php tests/company-tenancy.php
           php tests/company-settings.php
+          php tests/company-invitations.php
           php tests/module-handoff.php
           python3 tests/company-http.py
       - name: Delivery booking API contracts
