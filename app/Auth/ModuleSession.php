@@ -11,9 +11,11 @@ final class ModuleSession
 {
     public function __construct(private readonly InstanceCatalog $catalog) {}
 
-    private function audience(array $i): string
+    private function audience(array $i, ?array $validation = null): string
     {
-        return hash('sha256', json_encode([$i['id'],$i['organization_id'],$i['project_id'],$i['module_key'],$i['origin']], JSON_THROW_ON_ERROR));
+        $binding=[$i['id'],$i['organization_id'],$i['project_id'],$i['module_key'],$i['origin']];
+        if ($validation !== null) $binding[]=['validation',$validation['run_id'],$validation['expires_at']];
+        return hash('sha256', json_encode($binding, JSON_THROW_ON_ERROR));
     }
 
     private function server(int $id, string $key): array
@@ -36,13 +38,14 @@ final class ModuleSession
     public function issue(array $user, int $id, ?int $now=null): array
     {
         $now??=time();
-        $context=(new ModuleHandoff($this->catalog))->authorize($user,$id);
+        $context=(new ModuleHandoff($this->catalog))->authorize($user,$id,$now);
+        $expires=min($now+28800,$context['validation']['expires_at']??PHP_INT_MAX);
         $token=bin2hex(random_bytes(32));
         $stmt=Connection::pdo()->prepare('INSERT INTO module_sessions (token_hash,audience_hash,instance_id,user_id,expires_at) VALUES (?,?,?,?,?)');
-        $stmt->execute([hash('sha256',$token),$this->audience($context['instance']),$id,(int)$user['id'],$now+28800]);
+        $stmt->execute([hash('sha256',$token),$this->audience($context['instance'],$context['validation']),$id,(int)$user['id'],$expires]);
         $cleanup=Connection::pdo()->prepare('DELETE FROM module_sessions WHERE expires_at < ?');
         $cleanup->execute([$now-86400]);
-        return $this->identity($user,$context,$now)+['session_token'=>$token,'session_expires_at'=>$now+28800];
+        return $this->identity($user,$context,$now)+['session_token'=>$token,'session_expires_at'=>$expires];
     }
 
     public function validate(int $id, string $token, string $key, ?int $now=null): array
@@ -51,11 +54,12 @@ final class ModuleSession
         if (!preg_match('/^[a-f0-9]{64}$/D',$token)) throw new RuntimeException('Access denied.');
         $stmt=Connection::pdo()->prepare('SELECT user_id,audience_hash,expires_at FROM module_sessions WHERE token_hash=? AND instance_id=? AND revoked_at IS NULL AND expires_at>?');
         $stmt->execute([hash('sha256',$token),$id,$now]);$session=$stmt->fetch();
-        if (!$session || !hash_equals((string)$session['audience_hash'],$this->audience($instance))) throw new RuntimeException('Access denied.');
+        if (!$session) throw new RuntimeException('Access denied.');
         $stmt=Connection::pdo()->prepare('SELECT id,name,email,active,is_platform_admin FROM users WHERE id=?');
         $stmt->execute([(int)$session['user_id']]);$user=$stmt->fetch();
         if (!$user)throw new RuntimeException('Access denied.');
-        $context=(new ModuleHandoff($this->catalog))->authorize($user,$id);
+        $context=(new ModuleHandoff($this->catalog))->authorize($user,$id,$now);
+        if (!hash_equals((string)$session['audience_hash'],$this->audience($context['instance'],$context['validation']))) throw new RuntimeException('Access denied.');
         return $this->identity($user,$context,$now)+['session_expires_at'=>(int)$session['expires_at']];
     }
 

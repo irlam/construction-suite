@@ -65,3 +65,18 @@ Chris merged PR2 into main at41e71f74616783fdd8d4e89c0da4ece76956399f (6Oct23:44
 Continued independently from that exact main checkpoint, adding explicit recipient-accepted company/project invitations with seven-day one-use tokens, owner-controlled roles, existing-account proof and revocation. No invitations sent and no private hosting settings changed. See COMPANY-INVITATIONS.md.
 
 Added the viewer membership role for company or assigned-project clients. Invitations and administration forms support it; company management remains restricted. The matching Programme adapter enforces read-only requests against a fresh Suite identity. Other module adapters and hosted verification remain pending.
+
+## 8 October — controlled authenticated staging validation source
+
+Owner task receipts verify both Programme restricted-hosting configurations,
+anonymous HTTPS entries, inactive fixture state, module role eligibility and Alpha
+misplaced-directory cleanup. Actual authenticated handoff remains unverified.
+
+Added an optional, private, named-account validation window for the exact Alpha/Beta
+fixtures. All normal authorization checks remain; readiness flags stay false.
+Grants/sessions are bound to the run and capped at one hour. Without the private
+policy, source installation permits no validation access. See STAGING-VALIDATION.md
+for deployment sequence, fixture activation review, test-account setup and rollback.
+
+Source is staged for review; no live policy, account, company/project activation,
+credential change or new production-readiness claim accompanies this checkpoint.

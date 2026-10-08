@@ -38,6 +38,9 @@ jobs:
       - name: Module handoff security regression
         run: php tests/module-handoff.php
 
+      - name: Staging validation authorization regression
+        run: php tests/staging-validation.php
+
   mysql-controls:
     runs-on: ubuntu-latest
     strategy:
@@ -50,6 +53,8 @@ jobs:
             script: tests/company-invitations.php
           - database: suite_test_module_gateway
             script: tests/module-mysql.php
+          - database: suite_test_staging_validation
+            script: tests/staging-validation.php
     services:
       mysql:
         image: mysql:8.4
