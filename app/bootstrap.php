@@ -23,6 +23,7 @@ require_once SUITE_ROOT . '/app/Tenancy/CompanySettings.php';
 require_once SUITE_ROOT . '/app/Tenancy/CompanyInvitations.php';
 require_once SUITE_ROOT . '/app/Modules/ModuleRegistry.php';
 require_once SUITE_ROOT . '/app/Modules/InstanceCatalog.php';
+require_once SUITE_ROOT . '/app/Modules/StagingValidation.php';
 require_once SUITE_ROOT . '/app/Auth/ModuleHandoff.php';
 require_once SUITE_ROOT . '/app/Auth/ModuleSession.php';
 require_once SUITE_ROOT . '/app/Modules/ProjectScope.php';

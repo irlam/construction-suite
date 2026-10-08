@@ -22,6 +22,7 @@ header('Referrer-Policy: no-referrer');
 ?>
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Open project tool · Construction Suite</title><link rel="stylesheet" href="/assets/css/app.css"></head><body class="app-page"><main class="app-shell admin-shell"><section class="admin-panel">
 <h1>Open <?= suite_e((string) suite_config('modules')[$instance['module_key']]['name']) ?></h1>
+<?php if ($context['validation'] !== null): ?><p>Staging validation · access ends at <?= suite_e(date('H:i T', $context['validation']['expires_at'])) ?>.</p><?php endif; ?>
 <p><?= suite_e((string) $context['project']['organization_name']) ?> · <?= suite_e((string) $context['project']['name']) ?></p>
 <?php if ($code): ?><form id="handoff" method="post" action="<?= suite_e($instance['origin']) ?>/suite-login.php"><input type="hidden" name="code" value="<?= suite_e($code) ?>"><input type="hidden" name="state" value="<?= suite_e($state) ?>"><button class="button primary">Continue to project tool</button></form><script>document.getElementById('handoff').submit();</script>
 <?php else: ?><form method="post"><input type="hidden" name="instance_id" value="<?= $instanceId ?>"><input type="hidden" name="state" value="<?= suite_e($state) ?>"><input type="hidden" name="csrf_token" value="<?= suite_e($auth->csrfToken()) ?>"><button class="button primary">Sign in to this project tool</button></form><?php endif; ?>
