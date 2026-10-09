@@ -41,6 +41,12 @@ jobs:
       - name: Staging validation authorization regression
         run: php tests/staging-validation.php
 
+      - name: CLI and web inventory path regression
+        run: php tests/instance-inventory-path.php
+
+      - name: Web inventory and dashboard regression
+        run: python3 tests/instance-inventory-http.py
+
   mysql-controls:
     runs-on: ubuntu-latest
     strategy:
