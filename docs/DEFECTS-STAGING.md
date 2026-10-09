@@ -13,7 +13,7 @@ After deploying this reviewed Suite source and preparing both Defects hosts, run
 /usr/local/php84/bin/php bin/staging-window.php --activate defects
 ```
 
-A one-hour private policy enables only fixture launches to instances 3 and 4. It does not mark the tool ready. A Programme window cannot replace or remove a Defects policy, and vice versa. The dashboard can continue to display the ordinary unavailable notice while readiness remains false; the temporary fixture launcher is `public/launch.php?instance_id=3` or `4`, reached through the existing Suite authenticated launch flow.
+A one-hour private policy enables only fixture launches to instances 3 and 4. It does not mark the tool ready. A Programme window cannot replace or remove a Defects policy, and vice versa. The dashboard can continue to display the ordinary unavailable notice while readiness remains false; the temporary fixture launcher is `/launch.php?instance_id=3` or `4`, reached through the existing Suite authenticated launch flow.
 
 Test manager create/edit/refresh, viewer read/export with denied edits, private uploads/downloads, Alpha/Beta separation and logout/revocation. Close the window before its expiry to verify immediate denial:
 
