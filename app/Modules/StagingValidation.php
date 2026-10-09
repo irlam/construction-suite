@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace Suite\Modules;
 
 use Suite\Database\Connection;
-use Suite\Support\Env;
 use RuntimeException;
 
 /** Deployment-owned, one-hour pilot window; never declares an instance ready. */
@@ -41,7 +40,7 @@ final class StagingValidation
             throw new RuntimeException('Validation access denied.');
         }
         $inventory = $directory . '/programme-staging-instances.json';
-        if (Env::get('SUITE_INSTANCES_FILE', '') !== $inventory || !is_file($inventory) || is_link($inventory)
+        if (InstanceCatalog::inventoryFile() !== $inventory || !is_file($inventory) || is_link($inventory)
             || realpath($inventory) !== $inventory || (fileperms($inventory) & 0777) !== 0600
             || !hash_equals($policy['inventory_sha256'], (string) hash_file('sha256', $inventory))) throw new RuntimeException('Validation access denied.');
         $lists = [];

@@ -18,7 +18,7 @@ $remove = static function(string $path) use (&$remove): void {
     } else unlink($path);
 };
 try {
-    foreach (['app','config','database'] as $dir) $copy(dirname(__DIR__) . '/' . $dir, $root . '/' . $dir);
+    foreach (['app','config','database','public'] as $dir) $copy(dirname(__DIR__) . '/' . $dir, $root . '/' . $dir);
     mkdir($root . '/private', 0700);
     $mysql = getenv('SUITE_TEST_MYSQL') === '1';
     if (!$mysql) { putenv('DB_DRIVER=sqlite'); putenv('DB_DATABASE=' . $root . '/fixture.sqlite'); }

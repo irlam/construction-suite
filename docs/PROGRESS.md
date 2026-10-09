@@ -80,3 +80,23 @@ for deployment sequence, fixture activation review, test-account setup and rollb
 
 Source is staged for review; no live policy, account, company/project activation,
 credential change or new production-readiness claim accompanies this checkpoint.
+
+## 9 October — CLI inventory path and web dashboard repair
+
+The owner reports a fatal inventory path error on the web dashboard after the
+CLI checks passed. The provisioning helper writes a path from the CLI filesystem;
+Plesk may expose that filesystem as a jail while web PHP sees the full hosting
+path. The old loader cannot resolve the CLI alias in that web context.
+
+The loader now recognizes only the exact alias for this application's standard
+private inventory and resolves it to that same canonical application-owned file.
+An unrelated missing path never falls back. Public files, ambiguous aliases,
+symlinks and unsafe standard-file/directory permissions are rejected. Existing
+explicit private paths still load. The validation policy checks the same resolved
+file rather than comparing incompatible path strings.
+
+Added an owner-only web diagnostic returning sanitized booleans/counts. Source
+regressions reproduce the jail alias in a real authenticated web request and
+verify both dashboards, owner-only diagnostics and private-file denial. Hosted
+repair confirmation remains pending the owner's upload and web check. No inventory
+values, flags, credentials, fixture records or test accounts are changed by repair.

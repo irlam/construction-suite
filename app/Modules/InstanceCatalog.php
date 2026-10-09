@@ -10,18 +10,45 @@ final class InstanceCatalog
 {
     public function __construct(private readonly ?array $inventory = null) {}
 
+    /** Resolve the known CLI-jail alias to the same application-owned private file. */
+    public static function inventoryFile(): ?string
+    {
+        $file = Env::get('SUITE_INSTANCES_FILE', '');
+        if ($file === '') return null;
+        $root = @realpath(SUITE_ROOT);
+        $public = $root ? @realpath($root . '/public') : false;
+        if (!$root || !$public) throw new RuntimeException('Instance inventory must be a private deployment file.');
+        $expected = $root . '/private/programme-staging-instances.json';
+        $jailAlias = '/' . basename(dirname($root)) . '/' . basename($root) . '/private/programme-staging-instances.json';
+        $real = @realpath($file);
+        if ($file === $expected || $file === $jailAlias) {
+            $directory = $root . '/private';
+            $target = @realpath($expected);
+            // Never substitute a different file that happens to exist at the alias.
+            if (!$target || $target !== $expected || ($real && $real !== $target)
+                || @is_link($directory) || @realpath($directory) !== $directory
+                || (@fileperms($directory) & 0777) !== 0700
+                || @is_link($expected) || (@fileperms($expected) & 0777) !== 0600) {
+                throw new RuntimeException('Instance inventory must be a private deployment file.');
+            }
+            $real = $target;
+        }
+        if (!$real || !@is_file($real) || !@is_readable($real) || @is_link($file)
+            || $real === $public || str_starts_with($real, $public . DIRECTORY_SEPARATOR)) {
+            throw new RuntimeException('Instance inventory must be a private deployment file.');
+        }
+        return $real;
+    }
+
     public function all(): array
     {
         $items = $this->inventory;
         if ($items === null) {
-            $file = Env::get('SUITE_INSTANCES_FILE', '');
-            if ($file === '') return [];
-            $real = realpath($file);
-            $public = realpath(SUITE_ROOT . '/public');
-            if (!$real || ($public && str_starts_with($real, $public . DIRECTORY_SEPARATOR))) {
-                throw new RuntimeException('Instance inventory must be a private deployment file.');
-            }
-            $items = json_decode((string) file_get_contents($real), true, 32, JSON_THROW_ON_ERROR);
+            $real = self::inventoryFile();
+            if ($real === null) return [];
+            $bytes = @file_get_contents($real);
+            if ($bytes === false) throw new RuntimeException('Private instance inventory is unavailable.');
+            $items = json_decode($bytes, true, 32, JSON_THROW_ON_ERROR);
         }
         if (!is_array($items) || !array_is_list($items)) throw new RuntimeException('Invalid instance inventory.');
         $result = []; $bindings = []; $origins = [];
