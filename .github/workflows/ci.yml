@@ -2,7 +2,7 @@ name: Construction Suite checks
 
 on:
   push:
-    branches: [main, work/tenant-handoff-foundation, work/company-admin-controls, work/company-invitations]
+    branches: [main, work/tenant-handoff-foundation, work/company-admin-controls, work/company-invitations, work/defects-staging-window]
   pull_request:
 
 jobs:
@@ -40,6 +40,9 @@ jobs:
 
       - name: Staging validation authorization regression
         run: php tests/staging-validation.php
+
+      - name: Module-scoped staging window CLI regression
+        run: php tests/staging-window-cli.php
 
       - name: CLI and web inventory path regression
         run: php tests/instance-inventory-path.php
@@ -87,3 +90,4 @@ jobs:
           DB_USERNAME: root
           DB_PASSWORD: fixture-only-password
         run: php ${{ matrix.script }}
+

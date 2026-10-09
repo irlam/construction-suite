@@ -106,5 +106,25 @@ try {
     file_put_contents($inventory,json_encode($items));clearstatcache();
     unlink($policyFile);
     $deny(fn()=>$sessions->validate(1,$token,$key,104),'Removing policy closes window immediately');
+    // Defects uses the same fixture companies but a distinct pair and policy.
+    $defects=$items;
+    foreach($defects as &$entry){$entry['id']+=2;$entry['module_key']='defects';$entry['origin']=str_replace('.programme.defecttracker.uk','.defectnotice.site',$entry['origin']);}unset($entry);
+    file_put_contents($inventory,json_encode(array_merge($items,$defects)));clearstatcache();
+    $defectsKey=bin2hex(random_bytes(32));putenv('SUITE_INSTANCE_KEY_3='.$defectsKey);putenv('SUITE_INSTANCE_KEY_4='.bin2hex(random_bytes(32)));
+    $defectsPolicy=$policy;$defectsPolicy['module_key']='defects';$defectsPolicy['inventory_sha256']=hash_file('sha256',$inventory);
+    $defectsPolicy['instances']=[['instance_id'=>3,'user_ids'=>[2,3]],['instance_id'=>4,'user_ids'=>[4]]];
+    $write($defectsPolicy);
+    $deny(fn()=>$handoff->issue($user(2),1,$state,105),'Defects window does not enable Programme');
+    $code=$handoff->issue($user(2),3,$state,105);$defectIdentity=$handoff->redeem(3,$code,$state,$defectsKey,106);
+    $check($defectIdentity['module_key']==='defects'&&$defectIdentity['project_id']===7,'Defects handoff exact module/project');
+    $check($sessions->validate(3,$defectIdentity['session_token'],$defectsKey,107)['role']==='manager','Defects manager session');
+    $deny(fn()=>$handoff->issue($user(4),3,$state,107),'Beta cannot enter Alpha Defects');
+    $deny(fn()=>$handoff->redeem(4,$code,$state,$defectsKey,107),'Defects code cannot move to other instance');
+    $check(!suite_instances()->find(3)['ready'],'Defects readiness unchanged');
+    $mixed=$defectsPolicy;$mixed['instances'][0]['instance_id']=1;$write($mixed);
+    $deny(fn()=>$sessions->validate(3,$defectIdentity['session_token'],$defectsKey,107),'Mixed module pairs denied');
+    $write($defectsPolicy);unlink($policyFile);
+    $deny(fn()=>$sessions->validate(3,$defectIdentity['session_token'],$defectsKey,108),'Closing active Defects policy revokes before expiry');
     echo "PASS: named pilot access, expiry, current roles, project/company/tool/revocation gates, private policy and run-bound grants/sessions; readiness unchanged.\n";
 } finally { $remove($root); }
+
