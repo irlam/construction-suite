@@ -12,13 +12,15 @@ final class StagingValidation
     {
         if (empty($user['active']) || !empty($user['is_platform_admin'])) throw new RuntimeException('Validation access denied.');
         $expected = [
-            1 => [7, 7, 'alpha'],
-            2 => [8, 8, 'beta'],
+            1 => [7, 7, 'alpha', 'programme', 'programme.defecttracker.uk'],
+            2 => [8, 8, 'beta', 'programme', 'programme.defecttracker.uk'],
+            3 => [7, 7, 'alpha', 'defects', 'defectnotice.site'],
+            4 => [8, 8, 'beta', 'defects', 'defectnotice.site'],
         ];
         $binding = $expected[$instance['id']] ?? null;
         if (!$binding || $instance['organization_id'] !== $binding[0] || $instance['project_id'] !== $binding[1]
-            || $instance['module_key'] !== 'programme'
-            || $instance['origin'] !== 'https://' . $binding[2] . '.programme.defecttracker.uk'
+            || $instance['module_key'] !== $binding[3]
+            || $instance['origin'] !== 'https://' . $binding[2] . '.' . $binding[4]
             || ($instance['isolation_verified'] ?? null) !== false
             || ($instance['gateway_verified'] ?? null) !== false) throw new RuntimeException('Validation access denied.');
         $root = realpath(SUITE_ROOT);
@@ -43,6 +45,9 @@ final class StagingValidation
         if (InstanceCatalog::inventoryFile() !== $inventory || !is_file($inventory) || is_link($inventory)
             || realpath($inventory) !== $inventory || (fileperms($inventory) & 0777) !== 0600
             || !hash_equals($policy['inventory_sha256'], (string) hash_file('sha256', $inventory))) throw new RuntimeException('Validation access denied.');
+        $module = $policy['module_key'] ?? 'programme';
+        if (!in_array($module, ['programme', 'defects'], true) || $module !== $binding[3]) throw new RuntimeException('Validation access denied.');
+        $expected = array_filter($expected, static fn(array $entry): bool => $entry[3] === $module);
         $lists = [];
         foreach ($policy['instances'] as $entry) {
             if (!is_array($entry) || !is_int($entry['instance_id'] ?? null) || !isset($expected[$entry['instance_id']])
@@ -65,3 +70,4 @@ final class StagingValidation
         return ['run_id' => $policy['run_id'], 'expires_at' => $policy['expires_at']];
     }
 }
+
