@@ -71,4 +71,8 @@ check_scope(
     'Mapped Notices URL must use exact, encoded site filter'
 );
 
+$mappedDeliveries=ProjectScope::apply([['key'=>'deliveries','summary_url'=>'https://example.test/api','summary_param'=>'site','external_project_ref'=>'1']],2)[0];
+check_scope(empty($mappedDeliveries['summary_scope_blocked']),'Explicitly mapped Deliveries remains available across multiple projects');
+check_scope(\Suite\Modules\ModuleLinks::url($mappedDeliveries)==='https://sitedeliveries.site/schedule.php?site=1','Deliveries calendar link preserves its site reference');
+check_scope(\Suite\Modules\ModuleLinks::url(['key'=>'deliveries','external_project_ref'=>'__all__'])===null,'Deliveries cannot launch an unscoped all-data calendar');
 echo "PASS: Single-project backward compatibility and multi-project fail-closed scoping.\n";

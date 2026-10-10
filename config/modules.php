@@ -26,9 +26,10 @@ return [
         'url' => 'https://sitedeliveries.site',
         'summary_url' => 'https://sitedeliveries.site/api/suite-summary.php',
         'reference_url' => 'https://sitedeliveries.site/api/suite-references.php',
-        // One live delivery calendar: the source has no project/site column.
-        'single_calendar' => true,
-        'summary_allow_all' => true,
+        'summary_param' => 'site',
+        'summary_requires_ref' => true,
+        'single_calendar' => false,
+        'summary_allow_all' => false,
         'icon' => 'truck',
         'accent' => 'orange',
         'offline' => 'Online module',

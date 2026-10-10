@@ -19,7 +19,7 @@ final class ModuleLinks
             'defects' => 'https://defectnotice.site/defects.php',
             'permits' => 'https://sitepermits.site/manager-approvals.php',
             'safety' => 'https://sitesafety.site/actions.php',
-            'deliveries' => 'https://sitedeliveries.site/gateboard.php',
+            'deliveries' => 'https://sitedeliveries.site/schedule.php',
             'documents' => 'https://sitenotices.site/forms/clean-up/list.php',
         ];
         if (!isset($links[$key])) return null;
@@ -29,6 +29,10 @@ final class ModuleLinks
             if ($ref !== '' && ctype_digit($ref)) $query['project'] = $ref;
         }
         if ($key === 'permits' && $ref !== '') $query['site'] = $ref;
+        if ($key === 'deliveries') {
+            if ($ref === '' || !ctype_digit($ref)) return null;
+            $query['site'] = $ref;
+        }
         if ($key === 'safety') {
             $query = ['status' => 'Open'];
             if ($ref !== '') $query['site'] = $ref;

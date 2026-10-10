@@ -21,7 +21,7 @@ $check(is_file(SUITE_ROOT . '/database/migrations/001_project_modules.sqlite.sql
 $integratedKeys = ['defects', 'permits', 'safety', 'deliveries', 'documents'];
 foreach ($modules as $module) {
     if (in_array((string) ($module['key'] ?? ''), $integratedKeys, true)) {
-        $check(($module['summary_allow_all'] ?? false) === true, 'Integrated module must allow all-data fallback.');
+        $check(($module['summary_allow_all'] ?? false) === ($module['key'] !== 'deliveries'), 'Deliveries requires an explicit site; other modules preserve their fallback.');
     }
     if (in_array((string) ($module['key'] ?? ''), $integratedKeys, true)) {
         $check(str_starts_with((string) ($module['summary_url'] ?? ''), 'https://'), 'Live summary URL missing.');
