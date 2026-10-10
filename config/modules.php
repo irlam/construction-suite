@@ -1,6 +1,24 @@
 <?php
 
 return [
+    'qa' => [
+        'name' => 'Site QA',
+        'short_name' => 'QA',
+        'description' => 'Inspect workmanship, capture evidence and verify corrective actions before approval.',
+        'url' => 'https://qa.defecttracker.uk',
+        'health_url' => 'https://qa.defecttracker.uk/health.php',
+        'summary_url' => 'https://qa.defecttracker.uk/api/suite-summary.php',
+        'reference_url' => 'https://qa.defecttracker.uk/api/suite-references.php',
+        'summary_param' => 'project',
+        'summary_requires_ref' => true,
+        'summary_allow_all' => false,
+        'icon' => 'qa',
+        'accent' => 'blue',
+        'offline' => 'Offline drafts',
+        'enabled' => true,
+        'roles' => ['*'],
+        'sort' => 45,
+    ],
     'defects' => [
         'name' => 'Defect Tracker',
         'short_name' => 'Defects',
