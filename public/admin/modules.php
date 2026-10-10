@@ -174,8 +174,7 @@ if ($ready && $project) {
         <div class="notice warning">
           <strong>Multi-project safety is enabled.</strong>
           Each live module needs an actual external project/site mapping.
-          All-data summaries are blocked. Deliveries is a single shared calendar
-          and needs a project-aware source before its figures can be shown here.
+          All-data summaries are blocked. Select the matching source site for each module, including Deliveries.
         </div>
       <?php endif; ?>
       <section class="module-config-grid">
@@ -221,7 +220,7 @@ if ($ready && $project) {
                 <?php if ($externalRef !== '' && !$externalRefKnown): ?>
                   <span class="mapping-warning">The current value “<?= suite_e($externalRef) ?>” is not a real value from this module. Choose the correct one above.</span>
                 <?php elseif (!$referenceItems): ?>
-                  <span class="mapping-note">No project/site values exist yet, so the Suite will use all data in this module.</span>
+                  <span class="mapping-note"><?= $allowAll && $orgProjectCount <= 1 ? 'No project/site values exist yet, so the Suite will use all data in this module.' : 'Reporting remains unavailable until a real source site is mapped.' ?></span>
                 <?php else: ?>
                   <span class="mapping-note">Loaded directly from <?= suite_e((string) $module['name']) ?>.</span>
                 <?php endif; ?>
