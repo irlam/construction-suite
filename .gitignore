@@ -33,3 +33,5 @@ config.local.php
 Thumbs.db
 .idea/
 .vscode/
+
+/release/
