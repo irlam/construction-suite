@@ -37,7 +37,18 @@ $orgProjectCount = (int) $pdo->query(
      WHERE 1 = 1'
 )->fetchColumn();
 $definitions = suite_modules()->definitions();
-$references = suite_reference_client()->fetch($definitions);
+$instances = [];
+if ($project) {
+    foreach (suite_instances()->all() as $instance) {
+        if ($instance['project_id'] === $projectId && $instance['organization_id'] === (int) $project['organization_id']) {
+            $instances[$instance['module_key']] = $instance;
+        }
+    }
+}
+// A prepared company connection must never offer sites from the standalone app.
+$references = suite_reference_client()->fetch(array_values(array_filter(
+    $definitions, static fn(array $module): bool => !isset($instances[$module['key']])
+)));
 
 $ready = Connection::tableExists('project_modules');
 $message = null;
@@ -57,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $ready && $project) {
                 $isEnabled = isset($enabled[$key]) ? 1 : 0;
                 $externalRef = trim((string) ($externalRefs[$key] ?? ''));
                 $externalRef = $externalRef !== '' ? $externalRef : null;
+                if (isset($instances[$key])) $externalRef = null;
 
                 // Reject submitted references that are not present in the
                 // authenticated source module. Never trust a forged select.
@@ -181,6 +193,7 @@ if ($ready && $project) {
         <?php foreach ($definitions as $module):
           $key = (string) $module['key'];
           $setting = $settings[$key] ?? null;
+          $instance = $instances[$key] ?? null;
           $enabledNow = $setting ? (bool) $setting['enabled'] : (bool) ($module['enabled'] ?? true);
           $externalRef = (string) ($setting['external_project_ref'] ?? '');
           $referenceState = $references[$key] ?? null;
@@ -199,6 +212,11 @@ if ($ready && $project) {
             </div>
             <strong><?= suite_e((string) $module['name']) ?></strong>
             <p><?= suite_e((string) $module['description']) ?></p>
+            <?php if ($instance): ?>
+              <p class="module-ref-label"><strong><?= !empty($instance['ready']) ? 'Connected to this company and site' : 'Connection prepared — awaiting final verification' ?></strong></p>
+              <p class="mapping-note"><?= ($instance['scope_mode'] ?? '') === 'company_site' ? 'Bookings are restricted to the assigned company and site. Gates and equipment share the site’s capacity.' : 'This connection uses this company’s separate application, records and evidence.' ?></p>
+              <small><?= suite_e((string) $instance['origin']) ?></small>
+            <?php else: ?>
             <label class="module-ref-label">External project reference
               <?php if ($referenceConnected): ?>
                 <select name="external_ref[<?= suite_e($key) ?>]">
@@ -241,6 +259,7 @@ if ($ready && $project) {
               <?php endif; ?>
             </label>
             <small><?= suite_e((string) $module['url']) ?></small>
+            <?php endif; ?>
           </article>
         <?php endforeach; ?>
       </section>

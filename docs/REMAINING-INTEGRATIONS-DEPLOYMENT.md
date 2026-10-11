@@ -35,13 +35,25 @@ All eight dedicated hosts and six schemas are installed, with separate private b
 | Defects | 12 authenticated isolation/revocation checks passed | Final workflow and activation acceptance |
 | Programme | 22 authenticated checks passed | Final activation acceptance |
 | Deliveries | 53 checks passed over the public HTTPS address, including shared capacity, private exports, Viewer denial and fresh role changes | Final activation acceptance |
-| Safety | 51 checks passed using the exact origin with certificate verification enabled | Public DNS/proxy route verification |
-| Notices (`documents`) | 51 checks passed using the exact origin with certificate verification enabled | Public DNS/proxy route verification |
-| Permits | Storage/binding checks and local Viewer scope checks passed; HTTPS validation stopped before authentication | Certificate only covers the parent domain; issue certificates covering both child hosts |
-| QA | Separate hosted SQLite/evidence bindings installed; nine local company/membership checks passed | Both child hosts have no public DNS records and need valid certificates before hosted authentication tests |
+| Safety | 51 checks passed over public HTTPS after explicit test-host DNS records replaced the registrar wildcard route | Final activation acceptance |
+| Notices (`documents`) | 51 checks passed over public HTTPS after explicit test-host DNS records replaced the registrar wildcard route | Final activation acceptance |
+| Permits | 51 checks passed over public HTTPS; both child hosts now have individual trusted certificates | Final activation acceptance |
+| QA | 49 checks passed over public HTTPS; both child hosts have DNS, individual certificates and private per-app PHP runtime boundaries | Final activation acceptance |
 
 The Safety, Notices, Deliveries and Permits validation windows were closed after these runs. Defects and Programme windows remain closed. No persistent test access or production readiness was enabled. Origin-directed tests validate TLS and application behaviour, but do not establish public DNS/proxy correctness. No email notifications were sent by test fixtures or validators.
 
 Main Notices mail settings were preserved in the ignored, mode-0600 `includes/mail.local.php` before deploying the credential-free mail code. The hosted preflight and apply receipts both passed, with zero messages sent. `bin/remaining-notices-mail.php` performs this migration without printing settings. The Suite sign-in copy also excludes Handover.
 
-“8/8 available” on the Suite dashboard refers to existing app availability, not completed shared sign-in. Handover remains excluded. Public routing/certificate fixes, QA/Permits hosted checks and final onboarding/mobile/recovery acceptance are still required before claiming the rollout complete.
+“8/8 available” on the Suite dashboard refers to existing app availability, not completed shared sign-in. Handover remains excluded. All seven tools have hosted authentication/isolation receipts (289 checks across the seven runs). These checks establish the tested access boundaries; they do not certify every business workflow, offline queue, summary endpoint or production recovery procedure.
+
+## Final test-company preparation
+
+Alpha Construction Ltd (Test) / Alpha Test Site and Beta Building Services Ltd (Test) / Beta Test Site are configured with the existing administrator, manager and Viewer accounts. IDs, slugs and membership boundaries remain unchanged. The company page fits a verified 390px mobile viewport without horizontal overflow.
+
+The platform module page now shows each deployment-owned company/site connection, including shared Deliveries company/site scope. It does not offer unrelated standalone source sites for a prepared connection. A public form cannot declare isolation or readiness.
+
+QA required the previously authorised Plesk PHP path correction on both children. `bin/remaining-qa-runtime.php` installs a per-app `.user.ini` and an automatic runtime guard that restricts PHP to that QA application and `/tmp`; displayed errors are disabled. The initial QA validator used the wrong idempotency header, causing validation to stop before the Viewer permission check. The corrected validator uses the app's actual `Idempotency-Key` header; its 49-check rerun passed. Each failed and successful window was closed; final QA closure confirms the policy is absent and no remaining fixture sessions/grants needed revocation.
+
+`bin/complete-test-connections.php --check` prepares activation of the exact fourteen test connections. It requires only the six existing test accounts, unchanged roles, closed validation windows, no active fixture grants/sessions, exact hosts, private keys and Deliveries company/site bindings. `--enable` is the final persistent access change and requires action-time owner acceptance. It affects only organisations/projects 7 and 8; existing customer standalone connections are retained. Summary reporting is intentionally not declared verified by this activation helper.
+
+The hosted preflight passed with `test_connections_enabled:false`, fourteen connections, seven modules and Handover excluded. Twelve local activation checks passed, including open-window rejection, changed-role rejection, foreign-company membership rejection, active-session rejection, incorrect delivery-company rejection, private atomic publication and no change to an unrelated customer project. Company tenancy and company settings tests also passed.

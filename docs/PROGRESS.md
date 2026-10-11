@@ -150,3 +150,11 @@ The owner approved running and closing the Programme window. The initial run pas
 Programme staged source `eeba90b` now requires an explicit canonical, non-public, mode-0700 session directory before PHP session startup. The private CLI repair helper deployed the checksum-verified middleware and preserved both private bindings/keys while adding separate Alpha/Beta session folders under the hosting subscription's private tmp directory. Both anonymous gates passed after deployment.
 
 The authorised rerun returned ok:true after all 22 checks: two anonymous denials, four current manager/Viewer role checks, two own workspaces, copied-cookie denial both ways, two foreign-project denials, two Viewer write denials, and logout/revocation for all four sessions. Beta's own workspace remained usable after Alpha rejected its copied cookie. The window was then closed: window_enabled:false, module:programme, policy_absent:true, sessions_revoked:0, grants_revoked:0, tenant_ready:false. The checker had already revoked its credentials. No production readiness flags were changed. Full legacy import/export/mobile/recovery acceptance remains outstanding.
+
+## 11 October — remaining public connections verified
+
+Handover is excluded. Eight explicit test-host DNS records now reach the intended hosting origin; the existing parent/wildcard records are retained. Four individual QA/Permits certificates were issued after explicit acceptance of the certificate authority's terms. Public authenticated tests passed for QA (49), Safety (51), Permits (51), Notices (51) and Deliveries (53), alongside prior Defects (12) and Programme (22). All validation windows are closed.
+
+The two synthetic companies/sites have clear test names and their original three scoped roles each. The company administration page fits an actual 390px viewport. Prepared module connections are now displayed as company/site bindings rather than unrelated standalone source-site selectors. Source tests for company tenancy and settings were updated for the requested Handover exclusion and pass.
+
+The final fourteen-connection activation helper is prepared for owner acceptance. Persistent connections, scoped summary reporting, full offline acceptance and production backup/restore certification must not be inferred from these access tests.
