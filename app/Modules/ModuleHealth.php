@@ -73,7 +73,9 @@ final class ModuleHealth
             $error = curl_errno($ch);
 
             // 401/403 still prove the application is reachable and protecting itself.
-            $available = $error === 0 && (($code >= 200 && $code < 400) || in_array($code, [401, 403], true));
+            $body = (string) curl_multi_getcontent($ch);
+            $placeholder = preg_match('/Hier entsteht eine neue Webseite|Web Server.s Default Page|This is a default webpage generated for/i', $body) === 1;
+            $available = !$placeholder && $error === 0 && (($code >= 200 && $code < 400) || in_array($code, [401, 403], true));
 
             $results[$key] = [
                 'key' => $key,

@@ -127,3 +127,6 @@ After explicit owner approval, the one-hour six-account Defects window was opene
 
 
 The same read-only helper now verifies MySQL error 1142 when either fixture account queries the other database. Both passed live. Plesk connection allowlists were narrowed to the verified application server; reloaded forms confirmed persistence and a fresh PDO preflight still passed both connections and both cross-database denials. No passwords or roles changed. The hosting subscription still shares its OS account; these checks establish application/database boundaries, not separate OS-user isolation.
+
+
+Handover live root returns the provider's German placeholder (HTTP 200). Plesk shows application files already uploaded under public/, but no private environment file/database is configured in the inspected root. It is not an operating app. Suite health classification now rejects recognised provider placeholders instead of counting HTTP 200 as available. Programme base is serving a public sample programme; administrator sign-in is needed for the project control verification. These findings do not change existing tenant readiness flags.
