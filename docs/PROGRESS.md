@@ -158,3 +158,18 @@ Handover is excluded. Eight explicit test-host DNS records now reach the intende
 The two synthetic companies/sites have clear test names and their original three scoped roles each. The company administration page fits an actual 390px viewport. Prepared module connections are now displayed as company/site bindings rather than unrelated standalone source-site selectors. Source tests for company tenancy and settings were updated for the requested Handover exclusion and pass.
 
 The final fourteen-connection activation helper is prepared for owner acceptance. Persistent connections, scoped summary reporting, full offline acceptance and production backup/restore certification must not be inferred from these access tests.
+
+## 11 October — approved ongoing test connections enabled
+
+
+
+The owner explicitly approved ongoing Suite access for Alpha and Beta. The hosted activation returned ok:true for two companies, two sites, six existing test users and fourteen connections across seven modules. Handover is excluded and standalone customer connections are unchanged. All fourteen platform-owner browser handoffs subsequently opened their assigned tools and records.
+
+
+
+Browser acceptance found a mode-0600 delivery calendar JavaScript file, which blocked the calendar despite passing HTTP API checks. The narrowly scoped repair restores public read permissions for the existing calendar assets only. Notices now guards already-started PHP sessions, preventing warnings when its Suite front gate has opened the session. Both working pages were verified after deployment. Evidence: release/test-company-connections-enabled.png, release/beta-deliveries-suite-enabled.png and release/beta-qa-suite-enabled.png.
+
+
+
+Scoped aggregate dashboard summaries remain disabled for these test connections pending separate verification. Full offline draft/logout acceptance and production backup/restore certification remain outstanding; access validation is not evidence of these workflows.
+
