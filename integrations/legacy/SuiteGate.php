@@ -42,7 +42,7 @@ final class SuiteGate
         $read=[
             'safety'=>['/','/index.php','/dashboard.php','/list.php','/actions.php','/action_view.php','/analytics.php','/audit.php','/pdf.php','/export.php','/success.php','/how_it_works.php'],
             'permits'=>['/','/index.php','/dashboard.php','/manager-approvals.php','/view-permit.php','/view-permit-public.php','/view-inspection-public.php','/api/current-permits.php'],
-            'notices'=>['/','/index.php','/dashboard.php','/forms/clean-up/list.php','/forms/clean-up/pdf.php','/forms/clean-up/success.php','/api/offline_context.php','/api/offline_notices.php','/api/offline_asset.php']
+            'documents'=>['/','/index.php','/dashboard.php','/forms/clean-up/list.php','/forms/clean-up/pdf.php','/forms/clean-up/success.php','/api/offline_context.php','/api/offline_notices.php','/api/offline_asset.php']
         ];
         return in_array($path,$read[$module]??[],true)||$path==='/suite-file.php';
     }

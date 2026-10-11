@@ -5,18 +5,19 @@ ini_set('display_errors','0');ini_set('log_errors','0');
 $phase='arguments';$db=null;$created=false;$file=null;
 try{
  $mode=$argv[1]??'--dry-run';$module=$argv[2]??'defects';
- if($argc>3||!in_array($mode,['--dry-run','--activate','--close'],true)||!in_array($module,['programme','defects'],true))throw new RuntimeException();
+ if($argc>3||!in_array($mode,['--dry-run','--activate','--close'],true)||!in_array($module,['programme','defects','deliveries','qa','safety','permits','documents'],true))throw new RuntimeException();
  $phase='source';
- if(!hash_equals('4b3bdcb50c2cb32d7ddf70dc31aa658c1e73fa5392840a515f7a6c6e364721d6',hash('sha256',str_replace("\r\n","\n",(string)file_get_contents(dirname(__DIR__).'/app/Modules/StagingValidation.php')))))throw new RuntimeException();
+ if(!hash_equals('a727748dde03c820fa0535d961c8b4400c8fd2462cd39ef9f9674e809a257dbb',hash('sha256',str_replace("\r\n","\n",(string)file_get_contents(dirname(__DIR__).'/app/Modules/StagingValidation.php')))))throw new RuntimeException();
  require dirname(__DIR__).'/app/bootstrap.php';
  $phase='private';$root=realpath(SUITE_ROOT);$private=$root.'/private';$file=$private.'/staging-validation.json';
  if(!$root||!is_dir($private)||is_link($private)||realpath($private)!==$private||(fileperms($private)&0777)!==0700)throw new RuntimeException();
- $pair=$module==='programme'?[1,2]:[3,4];$suffix=$module==='programme'?'programme.defecttracker.uk':'defectnotice.site';
+ $plans=['programme'=>[[1,2],'programme.defecttracker.uk'],'defects'=>[[3,4],'defectnotice.site'],'deliveries'=>[[5,6],'sitedeliveries.site'],'qa'=>[[7,8],'qa.defecttracker.uk'],'safety'=>[[9,10],'sitesafety.site'],'permits'=>[[11,12],'sitepermits.site'],'documents'=>[[13,14],'sitenotices.site']];
+ [$pair,$suffix]=$plans[$module];
  $items=suite_instances()->all();$inventory=\Suite\Modules\InstanceCatalog::inventoryFile();
  if(!$inventory||realpath($inventory)!==$private.'/programme-staging-instances.json')throw new RuntimeException();
  $lists=[];
  foreach(['alpha'=>[$pair[0],7,[7,8,9]],'beta'=>[$pair[1],8,[10,11,12]]]as$site=>[$id,$org,$ids]){
-  $entry=$items[$id]??null;if(!$entry||$entry['organization_id']!==$org||$entry['project_id']!==$org||$entry['module_key']!==$module||$entry['origin']!=='https://'.$site.'.'.$suffix||($entry['isolation_verified']??null)!==false||($entry['gateway_verified']??null)!==false||$entry['ready'])throw new RuntimeException();
+  $entry=$items[$id]??null;if(!$entry||$entry['organization_id']!==$org||$entry['project_id']!==$org||$entry['module_key']!==$module||$entry['origin']!=='https://'.($module==='deliveries'?'':$site.'.').$suffix||($entry['isolation_verified']??null)!==false||($entry['gateway_verified']??null)!==false||$entry['ready'])throw new RuntimeException();
   $lists[]=['instance_id'=>$id,'user_ids'=>$ids];
  }
  $db=suite_db();

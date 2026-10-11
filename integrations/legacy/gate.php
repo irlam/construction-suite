@@ -8,7 +8,7 @@ try{
  $b=(static fn(string $f):mixed=>require $f)($file);
  if(!is_array($b))throw new RuntimeException('Invalid connection',503);
  foreach(['instance_id','organization_id','project_id']as$f)if(!is_int($b[$f]??null)||$b[$f]<1)throw new RuntimeException('Invalid connection',503);
- if(!in_array($b['module_key']??'', ['safety','permits','notices'],true)||!preg_match('/^[a-f0-9]{64}$/D',(string)($b['key']??'')))throw new RuntimeException('Invalid connection',503);
+ if(!in_array($b['module_key']??'', ['safety','permits','documents'],true)||!preg_match('/^[a-f0-9]{64}$/D',(string)($b['key']??'')))throw new RuntimeException('Invalid connection',503);
  $origin=parse_url($b['origin']??'');$host=$origin['host']??'';
  if(($origin['scheme']??'')!=='https'||isset($origin['path'],$origin['query'])||($b['origin']??'')!=='https://'.$host||($_SERVER['HTTP_HOST']??'')!==$host||($_SERVER['HTTPS']??'')!=='on')throw new RuntimeException('Wrong host',403);
  $sessions=$b['session_path']??'';$public=realpath($_SERVER['DOCUMENT_ROOT']??$root);
@@ -30,7 +30,9 @@ try{
    if(($_SERVER['REQUEST_METHOD']??'')!=='POST'||!is_string($_POST['suite_csrf']??null)||!hash_equals($_SESSION['suite_csrf']??'',$_POST['suite_csrf']))throw new RuntimeException('Reload before signing out',403);
    $token=$auth['token'];$_SESSION=[];session_regenerate_id(true);
    try{SuiteGate::request($b,'module-session',['action'=>'revoke','session_token'=>$token]);}catch(Throwable $ignored){}
-   header('Location: https://suite.defecttracker.uk/',true,303);exit;
+   header('Clear-Site-Data: "cache", "cookies", "storage"');
+   header('Content-Type: text/html; charset=utf-8');
+   echo '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Signed out</title><p>Signed out. <a href="https://suite.defecttracker.uk/">Return to Suite</a>.</p><script>(async()=>{try{localStorage.clear();sessionStorage.clear();for(const name of await caches.keys())await caches.delete(name);for(const registration of await navigator.serviceWorker.getRegistrations())await registration.unregister();if(indexedDB.databases)for(const database of await indexedDB.databases())if(database.name)indexedDB.deleteDatabase(database.name);}finally{location.replace("https://suite.defecttracker.uk/");}})();</script>';exit;
  }
  if(!SuiteGate::allowed($b['module_key'],$path,$_SERVER['REQUEST_METHOD']??'',$i['role'])){http_response_code(403);echo '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><p>This page is unavailable for your role. <a href="/dashboard.php">Return to this project</a>.</p>';exit;}
  $GLOBALS['suite_gate_binding']=$b;$GLOBALS['suite_gate_db']=$db;

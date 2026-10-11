@@ -16,11 +16,21 @@ final class StagingValidation
             2 => [8, 8, 'beta', 'programme', 'programme.defecttracker.uk'],
             3 => [7, 7, 'alpha', 'defects', 'defectnotice.site'],
             4 => [8, 8, 'beta', 'defects', 'defectnotice.site'],
+            5 => [7, 7, '', 'deliveries', 'sitedeliveries.site'],
+            6 => [8, 8, '', 'deliveries', 'sitedeliveries.site'],
+            7 => [7, 7, 'alpha', 'qa', 'qa.defecttracker.uk'],
+            8 => [8, 8, 'beta', 'qa', 'qa.defecttracker.uk'],
+            9 => [7, 7, 'alpha', 'safety', 'sitesafety.site'],
+            10 => [8, 8, 'beta', 'safety', 'sitesafety.site'],
+            11 => [7, 7, 'alpha', 'permits', 'sitepermits.site'],
+            12 => [8, 8, 'beta', 'permits', 'sitepermits.site'],
+            13 => [7, 7, 'alpha', 'documents', 'sitenotices.site'],
+            14 => [8, 8, 'beta', 'documents', 'sitenotices.site'],
         ];
         $binding = $expected[$instance['id']] ?? null;
         if (!$binding || $instance['organization_id'] !== $binding[0] || $instance['project_id'] !== $binding[1]
             || $instance['module_key'] !== $binding[3]
-            || $instance['origin'] !== 'https://' . $binding[2] . '.' . $binding[4]
+            || $instance['origin'] !== 'https://' . ($binding[2]!==''?$binding[2].'.':'') . $binding[4]
             || ($instance['isolation_verified'] ?? null) !== false
             || ($instance['gateway_verified'] ?? null) !== false) throw new RuntimeException('Validation access denied.');
         $root = realpath(SUITE_ROOT);
@@ -46,7 +56,7 @@ final class StagingValidation
             || realpath($inventory) !== $inventory || (fileperms($inventory) & 0777) !== 0600
             || !hash_equals($policy['inventory_sha256'], (string) hash_file('sha256', $inventory))) throw new RuntimeException('Validation access denied.');
         $module = $policy['module_key'] ?? 'programme';
-        if (!in_array($module, ['programme', 'defects'], true) || $module !== $binding[3]) throw new RuntimeException('Validation access denied.');
+        if (!in_array($module, ['programme', 'defects','deliveries','qa','safety','permits','documents'], true) || $module !== $binding[3]) throw new RuntimeException('Validation access denied.');
         $expected = array_filter($expected, static fn(array $entry): bool => $entry[3] === $module);
         $lists = [];
         foreach ($policy['instances'] as $entry) {
@@ -65,7 +75,7 @@ final class StagingValidation
         $q->execute([(int) $user['id']]);
         if ((int) $q->fetchColumn() !== 0) throw new RuntimeException('Validation access denied.');
         $q = Connection::pdo()->prepare('SELECT COUNT(*) FROM organizations WHERE id=? AND slug=?');
-        $q->execute([$binding[0], 'programme-' . $binding[2] . '-staging']);
+        $q->execute([$binding[0], 'programme-' . ($binding[0]===7?'alpha':'beta') . '-staging']);
         if ((int) $q->fetchColumn() !== 1) throw new RuntimeException('Validation access denied.');
         return ['run_id' => $policy['run_id'], 'expires_at' => $policy['expires_at']];
     }

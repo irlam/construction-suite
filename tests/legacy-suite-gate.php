@@ -13,7 +13,7 @@ deny(fn()=>SuiteGate::identity($b,['identity'=>array_replace($i,['project_id'=>8
 $u=SuiteGate::localUser($db,$b,$i,true);check((int)$u['id']===1);
 SuiteGate::applyIdentity($b,$i,$u);check($_SESSION['auth']['role']==='admin');
 SuiteGate::applyIdentity($b,array_replace($i,['role'=>'viewer']),$u);check($_SESSION['auth']['role']==='user');
-foreach(['safety','permits','notices']as$module){
+foreach(['safety','permits','documents']as$module){
  check(SuiteGate::allowed($module,'/dashboard.php','GET','viewer'));
  check(!SuiteGate::allowed($module,'/dashboard.php','POST','viewer'));
  check(!SuiteGate::allowed($module,'/admin/users.php','GET','manager'));

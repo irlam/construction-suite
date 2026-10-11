@@ -125,6 +125,17 @@ try {
     $deny(fn()=>$sessions->validate(3,$defectIdentity['session_token'],$defectsKey,107),'Mixed module pairs denied');
     $write($defectsPolicy);unlink($policyFile);
     $deny(fn()=>$sessions->validate(3,$defectIdentity['session_token'],$defectsKey,108),'Closing active Defects policy revokes before expiry');
+    foreach(['deliveries'=>[5,'sitedeliveries.site'],'qa'=>[7,'qa.defecttracker.uk'],'safety'=>[9,'sitesafety.site'],'permits'=>[11,'sitepermits.site'],'documents'=>[13,'sitenotices.site']]as$module=>[$first,$domain]){
+        $pair=[];
+        foreach(['alpha'=>7,'beta'=>8]as$side=>$org){$entry=['id'=>$first+($side==='beta'?1:0),'organization_id'=>$org,'project_id'=>$org,'module_key'=>$module,'origin'=>'https://'.($module==='deliveries'?'':$side.'.').$domain,'isolation_verified'=>false,'gateway_verified'=>false];if($module==='deliveries')$entry+=['scope_mode'=>'company_site','local_site_id'=>1,'local_company_id'=>$org];$pair[]=$entry;}
+        file_put_contents($inventory,json_encode($pair));clearstatcache();$moduleKey=bin2hex(random_bytes(32));putenv('SUITE_INSTANCE_KEY_'.$first.'='.$moduleKey);putenv('SUITE_INSTANCE_KEY_'.($first+1).'='.bin2hex(random_bytes(32)));
+        $pilot=$policy;$pilot['module_key']=$module;$pilot['inventory_sha256']=hash_file('sha256',$inventory);$pilot['instances']=[['instance_id'=>$first,'user_ids'=>[2,3]],['instance_id'=>$first+1,'user_ids'=>[4]]];$write($pilot);
+        $grant=$handoff->issue($user(2),$first,$state,109);$accepted=$handoff->redeem($first,$grant,$state,$moduleKey,110);
+        $check($accepted['module_key']===$module&&$accepted['project_id']===7,'New module identity is company/project bound');
+        $deny(fn()=>$handoff->issue($user(4),$first,$state,111),'New module foreign company denied');
+        $check($sessions->validate($first,$accepted['session_token'],$moduleKey,111)['role']==='manager','Manager validation remains scoped');
+        unlink($policyFile);$deny(fn()=>$sessions->validate($first,$accepted['session_token'],$moduleKey,112),'Closing each new module revokes access');
+    }
     echo "PASS: named pilot access, expiry, current roles, project/company/tool/revocation gates, private policy and run-bound grants/sessions; readiness unchanged.\n";
 } finally { $remove($root); }
 
