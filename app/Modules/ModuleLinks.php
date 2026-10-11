@@ -16,6 +16,7 @@ final class ModuleLinks
         if ($ref === '__all__') $ref = '';
 
         $links = [
+            'qa' => 'https://qa.defecttracker.uk/',
             'defects' => 'https://defectnotice.site/defects.php',
             'permits' => 'https://sitepermits.site/manager-approvals.php',
             'safety' => 'https://sitesafety.site/actions.php',
@@ -29,6 +30,10 @@ final class ModuleLinks
             if ($ref !== '' && ctype_digit($ref)) $query['project'] = $ref;
         }
         if ($key === 'permits' && $ref !== '') $query['site'] = $ref;
+        if ($key === 'qa') {
+            if ($ref === '' || !ctype_digit($ref)) return null;
+            $query['project'] = $ref;
+        }
         if ($key === 'deliveries') {
             if ($ref === '' || !ctype_digit($ref)) return null;
             $query['site'] = $ref;

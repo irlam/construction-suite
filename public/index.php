@@ -179,6 +179,14 @@ header('Cache-Control: private, no-store');
             <?php endif; ?>
           </div>
         </article>
+        <article class="snapshot-card">
+          <span class="snapshot-icon blue"><svg><use href="/assets/icons.svg#qa"></use></svg></span>
+          <div><strong data-summary-module="qa" data-summary-metric="awaiting_approval">—</strong><span>QA awaiting approval</span><small data-summary-status="qa">Connecting…</small>
+            <?php if (!empty($kpiLinks['qa'])): ?>
+              <a class="kpi-link" href="<?= suite_e((string) $kpiLinks['qa']) ?>" target="_blank" rel="noopener noreferrer">View records ↗</a>
+            <?php endif; ?>
+          </div>
+        </article>
       </div>
     </section>
     <?php endif; ?>

@@ -7,7 +7,7 @@ try{
  $mode=$argv[1]??'--dry-run';$module=$argv[2]??'defects';
  if($argc>3||!in_array($mode,['--dry-run','--activate','--close'],true)||!in_array($module,['programme','defects'],true))throw new RuntimeException();
  $phase='source';
- if(!hash_equals('4b3bdcb50c2cb32d7ddf70dc31aa658c1e73fa5392840a515f7a6c6e364721d6',(string)hash_file('sha256',dirname(__DIR__).'/app/Modules/StagingValidation.php')))throw new RuntimeException();
+ if(!hash_equals('4b3bdcb50c2cb32d7ddf70dc31aa658c1e73fa5392840a515f7a6c6e364721d6',hash('sha256',str_replace("\r\n","\n",(string)file_get_contents(dirname(__DIR__).'/app/Modules/StagingValidation.php')))))throw new RuntimeException();
  require dirname(__DIR__).'/app/bootstrap.php';
  $phase='private';$root=realpath(SUITE_ROOT);$private=$root.'/private';$file=$private.'/staging-validation.json';
  if(!$root||!is_dir($private)||is_link($private)||realpath($private)!==$private||(fileperms($private)&0777)!==0700)throw new RuntimeException();

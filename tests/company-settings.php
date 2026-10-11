@@ -57,7 +57,7 @@ try {
     $check($db->query("SELECT config_json FROM project_modules WHERE module_key='safety'")->fetchColumn()==='{"owner_setting":true}','Platform config preserved');
     $repo->saveProjectModules($alpha,1,1,[]);
     $check(suite_modules()->allForProject('platform_admin',1,false)===[],'Disabled preference suppresses tool');
-    $check(count(suite_modules()->allForProject('platform_admin',2,false))===8,'Other project unchanged');
+    $check(count(suite_modules()->allForProject('platform_admin',2,false))===9,'Other project unchanged');
     $db->exec('UPDATE projects SET active=0 WHERE id=1');
     $deny(fn()=>$repo->saveProjectModules($alpha,1,1,['programme']),'Inactive project cannot change tools');
     $db->exec('UPDATE organizations SET active=0 WHERE id=1');

@@ -9,7 +9,7 @@ $check = static function (bool $condition, string $message) use (&$failures): vo
 };
 
 $modules = suite_modules()->all('platform_admin');
-$check(count($modules) === 8, 'Expected eight initial Suite modules.');
+$check(count($modules) === 9, 'Expected nine Suite modules including QA.');
 $check(class_exists(\Suite\Modules\ModuleHealth::class), 'Module health service is not wired.');
 $check(class_exists(\Suite\Support\Audit::class), 'Audit service is not wired.');
 $check(class_exists(\Suite\Database\Migrator::class), 'Database migrator is not wired.');
@@ -18,10 +18,10 @@ $check(class_exists(\Suite\Modules\ReferenceClient::class), 'Project reference d
 $check(is_file(SUITE_ROOT . '/database/migrations/001_project_modules.mysql.sql'), 'MySQL project_modules migration is missing.');
 $check(is_file(SUITE_ROOT . '/database/migrations/001_project_modules.sqlite.sql'), 'SQLite project_modules migration is missing.');
 
-$integratedKeys = ['defects', 'permits', 'safety', 'deliveries', 'documents'];
+$integratedKeys = ['defects', 'permits', 'safety', 'deliveries', 'documents', 'qa'];
 foreach ($modules as $module) {
     if (in_array((string) ($module['key'] ?? ''), $integratedKeys, true)) {
-        $check(($module['summary_allow_all'] ?? false) === ($module['key'] !== 'deliveries'), 'Deliveries requires an explicit site; other modules preserve their fallback.');
+        $check(($module['summary_allow_all'] ?? false) === !in_array($module['key'], ['deliveries', 'qa'], true), 'Deliveries and QA require an explicit mapping; other modules preserve their fallback.');
     }
     if (in_array((string) ($module['key'] ?? ''), $integratedKeys, true)) {
         $check(str_starts_with((string) ($module['summary_url'] ?? ''), 'https://'), 'Live summary URL missing.');

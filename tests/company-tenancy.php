@@ -45,7 +45,7 @@ try {
     $check(count($repo->managedBy($projectAdmin))===1, 'Owner assigns first company administrator');
     $check(suite_modules()->allForProject('platform_admin',null)===[], 'No project never inherits legacy integrations');
     $check(suite_modules()->allForProject('admin',1)===[], 'Unverified legacy tools blocked for tenant users');
-    $check(count(suite_modules()->allForProject('platform_admin',1))===8, 'Owner retains working integrations');
+    $check(count(suite_modules()->allForProject('platform_admin',1))===9, 'Owner retains working integrations');
     $deny(fn()=> $repo->saveMembership($alpha,1,4,null,'company_admin'), 'Company admin escalation denied');
     $password = bin2hex(random_bytes(12));
     $created = $repo->createUser($alpha,1,['name'=>'New Worker','email'=>'new@example.test','password'=>$password,'scope_project_id'=>1,'role_key'=>'user']);

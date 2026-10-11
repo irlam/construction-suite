@@ -76,3 +76,6 @@ check_scope(empty($mappedDeliveries['summary_scope_blocked']),'Explicitly mapped
 check_scope(\Suite\Modules\ModuleLinks::url($mappedDeliveries)==='https://sitedeliveries.site/schedule.php?site=1','Deliveries calendar link preserves its site reference');
 check_scope(\Suite\Modules\ModuleLinks::url(['key'=>'deliveries','external_project_ref'=>'__all__'])===null,'Deliveries cannot launch an unscoped all-data calendar');
 echo "PASS: Single-project backward compatibility and multi-project fail-closed scoping.\n";
+
+check_scope(\Suite\Modules\ModuleLinks::url(['key'=>'qa','external_project_ref'=>'2'])==='https://qa.defecttracker.uk/?project=2','QA link preserves its mapped project');
+check_scope(\Suite\Modules\ModuleLinks::url(['key'=>'qa','external_project_ref'=>'__all__'])===null,'QA cannot launch an unscoped all-project report');
