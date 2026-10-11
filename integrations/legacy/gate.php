@@ -47,7 +47,9 @@ try{
    },$html)??$html;
    $token=htmlspecialchars($_SESSION['suite_csrf']??'',ENT_QUOTES,'UTF-8');
    $role=($GLOBALS['suite_gate_identity']['role']??'')==='viewer'?'<span>View-only access</span>':'';
-   $bar='<div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;padding:12px;background:#0b1220;color:#e5e7eb"><a style="color:#52c8e8" href="https://suite.defecttracker.uk/">Construction Suite</a>'.$role.'<form method="post" action="/logout.php"><input type="hidden" name="suite_csrf" value="'.$token.'"><button type="submit">Sign out of this tool</button></form></div>';
+   $noticeGuard=($GLOBALS['suite_gate_binding']['module_key']??'')==='documents'?' data-suite-logout':'';
+   $guardScript=$noticeGuard?'<script src="/assets/js/suite-logout.js" defer></script>':'';
+   $bar='<div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;padding:12px;background:#0b1220;color:#e5e7eb"><a style="color:#52c8e8" href="https://suite.defecttracker.uk/">Construction Suite</a>'.$role.'<form method="post" action="/logout.php"'.$noticeGuard.'><input type="hidden" name="suite_csrf" value="'.$token.'"><button type="submit">Sign out of this tool</button></form></div>'.$guardScript;
    return preg_replace('/(<body\b[^>]*>)/i','$1'.$bar,$html,1)??$html;
  });
 }catch(Throwable $error){

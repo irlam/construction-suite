@@ -90,9 +90,13 @@ final class ModuleRegistry
                 $module['launch_url'] = '/launch.php?instance_id=' . $instance['id'];
                 $module['tenant_isolated'] = true;
                 $module['single_project_instance'] = ($instance['scope_mode'] ?? '') !== 'company_site';
+                $module['company_site_instance'] = ($instance['scope_mode'] ?? '') === 'company_site';
                 $module['integration_key_env'] = $instance['key_env'];
                 unset($module['summary_url'], $module['reference_url'], $module['health_url'], $module['external_project_ref']);
-                if (($instance['summary_verified'] ?? false) === true && ($instance['scope_mode'] ?? '') !== 'company_site') $module['summary_url'] = $instance['origin'] . '/api/suite-summary.php';
+                if (($instance['summary_verified'] ?? false) === true) {
+                    $module['summary_url'] = $instance['origin'] . (($instance['scope_mode'] ?? '') === 'company_site'
+                        ? '/api/suite-instance-summary.php?instance_id=' . $instance['id'] : '/api/suite-summary.php');
+                }
                 $module['summary_requires_ref'] = false;
                 $module['single_calendar'] = false;
             }

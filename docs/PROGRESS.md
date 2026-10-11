@@ -173,3 +173,7 @@ Browser acceptance found a mode-0600 delivery calendar JavaScript file, which bl
 
 Scoped aggregate dashboard summaries remain disabled for these test connections pending separate verification. Full offline draft/logout acceptance and production backup/restore certification remain outstanding; access validation is not evidence of these workflows.
 
+
+## 11 October — dashboard and offline/recovery verification completed
+
+All fourteen Alpha/Beta summaries passed 64 hosted checks and are enabled. Both live dashboards show seven scoped metrics. Supported QA/Notices offline draft recovery, guarded logout, Suite reconnection and 390px layout were verified. The hosted drill passed fifteen database/scoped-record restores (166 tables, 778 rows) plus 5,909 file checksum restores. Handover remains excluded. See ROLLOUT-COMPLETION-20261011.md for evidence and the distinction between this completed test rollout and recurring production backup operations.

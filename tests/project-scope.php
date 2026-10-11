@@ -72,6 +72,11 @@ check_scope(
 );
 
 $mappedDeliveries=ProjectScope::apply([['key'=>'deliveries','summary_url'=>'https://example.test/api','summary_param'=>'site','external_project_ref'=>'1']],2)[0];
+$instanceDeliveries=ProjectScope::apply([['key'=>'deliveries','summary_url'=>'https://sitedeliveries.site/api/suite-instance-summary.php?instance_id=5','company_site_instance'=>true,'tenant_isolated'=>true,'launch_url'=>'/launch.php?instance_id=5']],2)[0];
+check_scope(empty($instanceDeliveries['summary_scope_blocked']),'Verified company/site reporting does not require a separate user-supplied site mapping');
+check_scope(\Suite\Modules\ModuleLinks::url($instanceDeliveries)==='/launch.php?instance_id=5','Company/site KPI link uses the scoped Suite handoff');
+$unverified=ProjectScope::apply([['key'=>'deliveries','summary_url'=>'https://example.test/api','company_site_instance'=>true]],2)[0];
+check_scope(!empty($unverified['summary_scope_blocked']),'A company/site flag alone does not bypass fail-closed scoping');
 check_scope(empty($mappedDeliveries['summary_scope_blocked']),'Explicitly mapped Deliveries remains available across multiple projects');
 check_scope(\Suite\Modules\ModuleLinks::url($mappedDeliveries)==='https://sitedeliveries.site/schedule.php?site=1','Deliveries calendar link preserves its site reference');
 check_scope(\Suite\Modules\ModuleLinks::url(['key'=>'deliveries','external_project_ref'=>'__all__'])===null,'Deliveries cannot launch an unscoped all-data calendar');

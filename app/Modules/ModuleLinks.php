@@ -10,7 +10,8 @@ final class ModuleLinks
         if (!empty($module['summary_scope_blocked'])) {
             return null;
         }
-        if (!empty($module['single_project_instance'])) return $module['launch_url'] ?? null;
+        if (!empty($module['single_project_instance'])
+            || (!empty($module['tenant_isolated']) && !empty($module['company_site_instance']))) return $module['launch_url'] ?? null;
         $key = (string) ($module['key'] ?? '');
         $ref = (string) ($module['external_project_ref'] ?? '');
         if ($ref === '__all__') $ref = '';
