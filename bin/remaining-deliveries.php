@@ -8,17 +8,17 @@ function deliveryPrivate(string $path,string $body):void{
 try{
  $mode=$argv[1]??'';if($argc!==2||!in_array($mode,['--check','--install'],true))throw new RuntimeException();
  require dirname(__DIR__).'/app/bootstrap.php';$root=realpath(SUITE_ROOT);$delivery=dirname($root,2).'/sitedeliveries.site/httpdocs';
- $phase='private inventory';$file=\Suite\Modules\InstanceCatalog::inventoryFile();$items=suite_instances()->all();foreach($items as$i)if(in_array($i['id'],[5,6],true))throw new RuntimeException();
+ $phase='private inventory';$file=\Suite\Modules\InstanceCatalog::inventoryFile();$items=array_values(suite_instances()->all());foreach($items as$i)if(in_array($i['id'],[5,6],true))throw new RuntimeException();
  foreach([5,6]as$id)if(\Suite\Support\Env::get('SUITE_INSTANCE_KEY_'.$id,'' )!=='')throw new RuntimeException();
- if(is_file($delivery.'/includes/suite.local.php')||is_link($delivery.'/includes/suite.local.php'))throw new RuntimeException();
- $phase='delivery code package';$codeZip=$root.'/bin/remaining-packages/deliveries-suite.zip';if(!hash_equals('16b28629f8db449bd888d1630705d709bbab0d44b2d691bea9f914de76e15884',hash_file('sha256',$codeZip)))throw new RuntimeException();$code=new ZipArchive();if($code->open($codeZip)!==true)throw new RuntimeException();
+ if(is_file($delivery.'/includes/suite-instances.local.php')||is_link($delivery.'/includes/suite-instances.local.php'))throw new RuntimeException();
+ $phase='delivery code package';$codeZip=$root.'/bin/remaining-packages/deliveries-suite.zip';if(!hash_equals('395dee56103c7f01f004160b8150aac0fb8b4e805404f1ce5c28eba591e861c2',hash_file('sha256',$codeZip)))throw new RuntimeException();$code=new ZipArchive();if($code->open($codeZip)!==true)throw new RuntimeException();
  $phase='delivery schema';$pdo=(static function(string $path):PDO{require $path.'/db.php';return $pdo;})($delivery);
  foreach(['logistics_sites','logistics_companies','logistics_gates','logistics_resources','logistics_users','logistics_memberships','deliveries']as$t)$pdo->query('SELECT 1 FROM '.$t.' LIMIT 0');
- $existing=$pdo->query("SELECT id FROM logistics_sites WHERE name='Suite shared logistics test site'")->fetchColumn();if($existing)throw new RuntimeException();
+ $existing=$pdo->query("SELECT id FROM logistics_sites WHERE name='Suite shared logistics test site'")->fetchColumn();if($existing){$q=$pdo->prepare("SELECT COUNT(*) FROM deliveries WHERE site_id=? AND material IN ('ALPHA SUITE TEST ONLY','BETA SUITE TEST ONLY')");$q->execute([$existing]);if((int)$q->fetchColumn()!==2)throw new RuntimeException();}
  if($mode==='--check'){echo json_encode(['ok'=>true,'writes_performed'=>0,'tenant_ready'=>false])."\n";exit;}
  $phase='delivery code';if(!$code->extractTo($delivery))throw new RuntimeException();$code->close();
  $phase='synthetic companies and shared site';$pdo->exec('CREATE TABLE IF NOT EXISTS logistics_suite_users(instance_id BIGINT UNSIGNED NOT NULL,suite_user_id BIGINT UNSIGNED NOT NULL,local_user_id INT NOT NULL,PRIMARY KEY(instance_id,suite_user_id),UNIQUE KEY suite_local_user(local_user_id)) ENGINE=InnoDB');
- $pdo->beginTransaction();$q=$pdo->prepare('INSERT INTO logistics_sites(name,operator_name) VALUES(?,?)');$q->execute(['Suite shared logistics test site','Suite synthetic test operator']);$site=(int)$pdo->lastInsertId();
+ if(!$existing){$pdo->beginTransaction();$q=$pdo->prepare('INSERT INTO logistics_sites(name,operator_name) VALUES(?,?)');$q->execute(['Suite shared logistics test site','Suite synthetic test operator']);$site=(int)$pdo->lastInsertId();
  $bindings=[];$fixtures=[];
  foreach(['alpha'=>7,'beta'=>8]as$side=>$org){
   $q=$pdo->prepare('INSERT INTO logistics_companies(name) VALUES(?)');$q->execute([ucfirst($side).' Suite logistics test company']);$company=(int)$pdo->lastInsertId();
@@ -30,9 +30,9 @@ try{
   $id=$side==='alpha'?5:6;$key=bin2hex(random_bytes(32));$bindings[$id]=['instance_id'=>$id,'organization_id'=>$org,'project_id'=>$org,'local_site_id'=>$site,'local_company_id'=>$company,'origin'=>'https://sitedeliveries.site','key'=>$key];
   $items[]=['id'=>$id,'organization_id'=>$org,'project_id'=>$org,'module_key'=>'deliveries','origin'=>'https://sitedeliveries.site','scope_mode'=>'company_site','local_site_id'=>$site,'local_company_id'=>$company,'isolation_verified'=>false,'gateway_verified'=>false,'summary_verified'=>false];
   $fixtures[$side]=['record_id'=>$record,'site_id'=>$site,'company_id'=>$company,'gate_id'=>$gate,'resource_id'=>$resource];
- }$pdo->commit();
+ }$pdo->commit();}else{$site=(int)$existing;$bindings=[];$fixtures=[];foreach(['alpha'=>7,'beta'=>8]as$side=>$org){$q=$pdo->prepare('SELECT d.* FROM deliveries d JOIN logistics_companies c ON c.id=d.company_id WHERE d.site_id=? AND d.material=? AND c.name=?');$q->execute([$site,strtoupper($side).' SUITE TEST ONLY',ucfirst($side).' Suite logistics test company']);$d=$q->fetch(PDO::FETCH_ASSOC);if(!$d||$q->fetch())throw new RuntimeException();$id=$side==='alpha'?5:6;$key=bin2hex(random_bytes(32));$bindings[$id]=['instance_id'=>$id,'organization_id'=>$org,'project_id'=>$org,'local_site_id'=>$site,'local_company_id'=>(int)$d['company_id'],'origin'=>'https://sitedeliveries.site','key'=>$key];$items[]=['id'=>$id,'organization_id'=>$org,'project_id'=>$org,'module_key'=>'deliveries','origin'=>'https://sitedeliveries.site','scope_mode'=>'company_site','local_site_id'=>$site,'local_company_id'=>(int)$d['company_id'],'isolation_verified'=>false,'gateway_verified'=>false,'summary_verified'=>false];$fixtures[$side]=['record_id'=>(int)$d['id'],'site_id'=>$site,'company_id'=>(int)$d['company_id'],'gate_id'=>(int)$d['gate_id'],'resource_id'=>(int)$d['resource_id']];}}
  $phase='register disabled delivery connections';(new \Suite\Modules\InstanceCatalog($items))->all();
- deliveryPrivate($delivery.'/includes/suite.local.php',"<?php\nreturn ".var_export($bindings,true).";\n");
+ deliveryPrivate($delivery.'/includes/suite-instances.local.php',"<?php\nreturn ".var_export($bindings,true).";\n");
  deliveryPrivate($root.'/private/delivery-test-fixtures.json',json_encode($fixtures,JSON_THROW_ON_ERROR));
  $envFile=$root.'/.env';$env=rtrim((string)file_get_contents($envFile))."\n";foreach($bindings as$id=>$b)$env.='SUITE_INSTANCE_KEY_'.$id.'='.$b['key']."\n";
  $temp=$envFile.'.'.bin2hex(random_bytes(8)).'.tmp';deliveryPrivate($temp,$env);if(!rename($temp,$envFile))throw new RuntimeException();

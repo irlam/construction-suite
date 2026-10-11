@@ -35,11 +35,19 @@ try{
    echo '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Signed out</title><p>Signed out. <a href="https://suite.defecttracker.uk/">Return to Suite</a>.</p><script>(async()=>{try{localStorage.clear();sessionStorage.clear();for(const name of await caches.keys())await caches.delete(name);for(const registration of await navigator.serviceWorker.getRegistrations())await registration.unregister();if(indexedDB.databases)for(const database of await indexedDB.databases())if(database.name)indexedDB.deleteDatabase(database.name);}finally{location.replace("https://suite.defecttracker.uk/");}})();</script>';exit;
  }
  if(!SuiteGate::allowed($b['module_key'],$path,$_SERVER['REQUEST_METHOD']??'',$i['role'])){http_response_code(403);echo '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><p>This page is unavailable for your role. <a href="/dashboard.php">Return to this project</a>.</p>';exit;}
- $GLOBALS['suite_gate_binding']=$b;$GLOBALS['suite_gate_db']=$db;
+ $GLOBALS['suite_gate_binding']=$b;$GLOBALS['suite_gate_db']=$db;$GLOBALS['suite_gate_identity']=$i;
  ob_start(static function(string $html):string{
    if(!str_contains(strtolower($html),'<body'))return $html;
+   // Static file handling may bypass Apache rewrites. Keep evidence links on
+   // the authenticated PHP endpoint; the underlying folders stay private.
+   $origin=preg_quote($GLOBALS['suite_gate_binding']['origin'],'~');
+   $html=preg_replace_callback('~\b(src|href)=(["\'])(?:'.$origin.')?/?((?:uploads|export|pdfs)/[^"\']*)\2~i',static function(array $m):string{
+     $path=parse_url(html_entity_decode($m[3],ENT_QUOTES,'UTF-8'),PHP_URL_PATH);
+     return $m[1].'='.$m[2].'/suite-file.php?file='.rawurlencode(rawurldecode((string)$path)).$m[2];
+   },$html)??$html;
    $token=htmlspecialchars($_SESSION['suite_csrf']??'',ENT_QUOTES,'UTF-8');
-   $bar='<div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;padding:12px;background:#0b1220;color:#e5e7eb"><a style="color:#52c8e8" href="https://suite.defecttracker.uk/">Construction Suite</a><form method="post" action="/logout.php"><input type="hidden" name="suite_csrf" value="'.$token.'"><button type="submit">Sign out of this tool</button></form></div>';
+   $role=($GLOBALS['suite_gate_identity']['role']??'')==='viewer'?'<span>View-only access</span>':'';
+   $bar='<div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:center;padding:12px;background:#0b1220;color:#e5e7eb"><a style="color:#52c8e8" href="https://suite.defecttracker.uk/">Construction Suite</a>'.$role.'<form method="post" action="/logout.php"><input type="hidden" name="suite_csrf" value="'.$token.'"><button type="submit">Sign out of this tool</button></form></div>';
    return preg_replace('/(<body\b[^>]*>)/i','$1'.$bar,$html,1)??$html;
  });
 }catch(Throwable $error){
