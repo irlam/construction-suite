@@ -187,6 +187,14 @@ header('Cache-Control: private, no-store');
             <?php endif; ?>
           </div>
         </article>
+        <article class="snapshot-card">
+          <span class="snapshot-icon blue"><svg><use href="/assets/icons.svg#calendar"></use></svg></span>
+          <div><strong data-summary-module="programme" data-summary-metric="outstanding">—</strong><span>Programme activities outstanding</span><small data-summary-status="programme">Connecting…</small>
+            <?php if (!empty($kpiLinks['programme'])): ?>
+              <a class="kpi-link" href="<?= suite_e((string) $kpiLinks['programme']) ?>" target="_blank" rel="noopener noreferrer">View programme ↗</a>
+            <?php endif; ?>
+          </div>
+        </article>
       </div>
     </section>
     <?php endif; ?>
