@@ -100,3 +100,22 @@ regressions reproduce the jail alias in a real authenticated web request and
 verify both dashboards, owner-only diagnostics and private-file denial. Hosted
 repair confirmation remains pending the owner's upload and web check. No inventory
 values, flags, credentials, fixture records or test accounts are changed by repair.
+
+
+## 11 October — Rochdale reporting and Delivery Viewer rollout
+
+The owner authorised completing the six rollout stages with synthetic test data. This checkpoint is partial: product availability and source mappings do not establish shared sign-in or company isolation.
+
+- Suite main `197ad42`: QA registered as the ninth product, awaiting-approval KPI and project link; bootstrap, project-scope, notification, company administration/invitation, handoff, staging policy/CLI and inventory HTTP checks passed. Linux permission checks ran on Ubuntu PHP 8.3; staging source hashes now normalise checkout line endings.
+- Deliveries main `b90e8c7` / `dd94bc7`: server-enforced read-only company users, downgrade/revocation checks, admin role selection and refreshed calendar assets. Local 38 unit checks and 28 HTTP/concurrency checks passed. Live role column and five application files deployed; script version 5 observed. Existing admin/drag functionality retained. Phone-width preview measured 390px viewport with 375px document width; stats fit within 343px.
+- QA main `0c8f4a5`: Suite project query selects only an authorised project; malformed and unknown IDs fail without falling back to another project. Verified live project 1/2 selection and denied unknown ID; manual switching still works. App/service-worker cache version 7 deployed.
+- Suite private reporting helper `6b58fc1`: existing reporting key configured privately for QA; no database reset and shared sign-in remains disabled. No key is included in Git or tool output.
+- Live Rochdale Road project maps Deliveries site 1, QA project 2, Safety exact site name, Notices existing exact site name, and now Permits exact site name. All five KPIs return scoped data. Defects source mapping remains unavailable.
+- Synthetic Safety tour 2 has all checks N/A, a clearly synthetic signature, and no email recipients; saved receipt confirms mail=0. Permits `c884d60` adds an explicitly requested CLI-only draft fixture, no notification/workflow calls and no work authorisation. Live first and repeated runs confirmed created=true then false, zero emails, status=draft.
+
+Remaining: Defects copied-cookie checks in both directions and reverse attachment isolation; database-network/OS isolation decision; Delivery Suite handoff; QA isolated instance rollout and contractor mappings; Safety/Permits/Notices/Handover adapters and isolated deployments; onboarding verification; authenticated mobile/privacy/logout/revocation and recovery tests. Legacy Handover source currently queries all projects/assets after local sign-in and caches user roles in the session. It cannot be marked company-isolated. Programme's tested adapter is on deploy/suite-staging, not ordinary main.
+
+Deliveries requires a shared site reservation authority: contractors using the same gates/cranes must share capacity checks while their booking details remain company-scoped. Splitting that site's booking database by contractor would permit double booking. This supersedes the earlier generic independent-database recommendation for Deliveries.
+
+
+Private Defects verification helper prepared and deployed: `bin/defects-isolation-check.php --check` passed live, reporting both fixtures verified, zero writes, no Suite contact and readiness false. The executable mode uses the normal one-use handoff contract and fresh app validation, tests real own-register/file access before copied-cookie and foreign-file denial in both directions, then logout/revocation. It prints only check results and safe diagnostics, keeps keys/cookies/tokens private, and cleans its sessions. Authenticated execution has not occurred in this checkpoint; the temporary fixture validation window remains closed.
