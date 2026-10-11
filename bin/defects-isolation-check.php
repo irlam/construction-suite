@@ -19,9 +19,10 @@ try {
   if(!is_string($attachment)||!preg_match('/^[a-f0-9]{64}$/D',$attachment)||!is_file($binding['upload_root'].'/'.$attachment))throw new RuntimeException();
   $phase=$host.' project scope';$gateway=new \DefectTracker\Suite\Gateway($binding);$scope=new \DefectTracker\Suite\ProjectScope($gateway,$db,$binding);$scope->assertDatabase();
   $store=new \DefectTracker\Suite\SessionStore($binding['session_root'],$binding);$flow=new \DefectTracker\Suite\SignIn($gateway,$scope,$store);
-  $fixtures[$host]=['config'=>$binding]+compact('flow','store','user','instance','attachment');
+  $fixtures[$host]=['config'=>$binding]+compact('flow','store','user','instance','attachment','db');
  }
- if($mode==='--check'){echo json_encode(['private_fixtures_verified'=>true,'suite_contacted'=>false,'writes_performed'=>0,'tenant_ready'=>false])."\n";exit;}
+ $network=[];foreach($fixtures as$host=>$fixture){$phase=$host.' database isolation';$other=$host==='alpha'?'beta':'alpha';$foreign=$fixtures[$other]['config']['database']['name'];try{$fixture['db']->query('SELECT id FROM `'.$foreign.'`.projects LIMIT 0');throw new RuntimeException();}catch(PDOException $e){if((int)($e->errorInfo[1]??0)!==1142)throw new RuntimeException();}$network[$host]=(string)$fixture['db']->query("SELECT SUBSTRING_INDEX(USER(),'@',-1)")->fetchColumn();}
+ if($mode==='--check'){echo json_encode(['cross_database_denied'=>true,'database_client_hosts'=>$network,'private_fixtures_verified'=>true,'suite_contacted'=>false,'writes_performed'=>0,'tenant_ready'=>false])."\n";exit;}
  $phase='authorised fixture handoff';
  foreach($fixtures as$host=>$fixture){
   $pending=$fixture['flow']->begin();parse_str((string)parse_url($pending['url'],PHP_URL_QUERY),$query);

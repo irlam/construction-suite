@@ -124,3 +124,6 @@ Private Defects verification helper prepared and deployed: `bin/defects-isolatio
 ## 11 October — authenticated Defects cross-instance verification
 
 After explicit owner approval, the one-hour six-account Defects window was opened, tested, then closed immediately. All 12 live checks passed: Alpha/Beta own registers, both copied-cookie denials, both own attachment SHA-256 matches, both foreign attachment 404s, both Suite session revocations, and both post-logout 401s. The closure receipt confirmed window_enabled=false, policy_absent=true, sessions_revoked=0 and grants_revoked=0 because the helper had already consumed/revoked its grants/sessions. Tenant readiness remains false and legacy workflows are not declared verified. Test receipts and screenshot are retained in ignored release/proof, containing no secrets.
+
+
+The same read-only helper now verifies MySQL error 1142 when either fixture account queries the other database. Both passed live. Plesk connection allowlists were narrowed to the verified application server; reloaded forms confirmed persistence and a fresh PDO preflight still passed both connections and both cross-database denials. No passwords or roles changed. The hosting subscription still shares its OS account; these checks establish application/database boundaries, not separate OS-user isolation.
