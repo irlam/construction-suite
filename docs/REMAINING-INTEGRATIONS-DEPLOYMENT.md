@@ -26,4 +26,22 @@ Deliveries retains its shared physical site calendar and reservation locks. Its 
 3. Verify anonymous denial, own-company reads/files, foreign-company denial, Viewer write denial, fresh role/membership changes, logout and Suite revocation for every module.
 4. Enable the verified project tools and finish onboarding/mobile/recovery checks.
 
-At preparation time, the new dedicated hosts and Suite sign-in connections are not deployed or activated. Existing Defects and Programme staging windows remain closed. “8/8 available” on the Suite dashboard refers to existing app availability, not completed shared sign-in.
+## Hosted progress
+
+All eight dedicated hosts and six schemas are installed, with separate private bindings, session directories and synthetic records. The retired, unassigned `k87747_qa` MySQL database was deleted with explicit user approval to free the final database slot; the current QA SQLite app is unaffected. The read-only eight-instance storage/binding check passed.
+
+| Module | Hosted validation | Remaining gate |
+| --- | --- | --- |
+| Defects | 12 authenticated isolation/revocation checks passed | Final workflow and activation acceptance |
+| Programme | 22 authenticated checks passed | Final activation acceptance |
+| Deliveries | 53 checks passed over the public HTTPS address, including shared capacity, private exports, Viewer denial and fresh role changes | Final activation acceptance |
+| Safety | 51 checks passed using the exact origin with certificate verification enabled | Public DNS/proxy route verification |
+| Notices (`documents`) | 51 checks passed using the exact origin with certificate verification enabled | Public DNS/proxy route verification |
+| Permits | Storage/binding checks and local Viewer scope checks passed; HTTPS validation stopped before authentication | Certificate only covers the parent domain; issue certificates covering both child hosts |
+| QA | Separate hosted SQLite/evidence bindings installed; nine local company/membership checks passed | Both child hosts have no public DNS records and need valid certificates before hosted authentication tests |
+
+The Safety, Notices, Deliveries and Permits validation windows were closed after these runs. Defects and Programme windows remain closed. No persistent test access or production readiness was enabled. Origin-directed tests validate TLS and application behaviour, but do not establish public DNS/proxy correctness. No email notifications were sent by test fixtures or validators.
+
+Main Notices mail settings were preserved in the ignored, mode-0600 `includes/mail.local.php` before deploying the credential-free mail code. The hosted preflight and apply receipts both passed, with zero messages sent. `bin/remaining-notices-mail.php` performs this migration without printing settings. The Suite sign-in copy also excludes Handover.
+
+“8/8 available” on the Suite dashboard refers to existing app availability, not completed shared sign-in. Handover remains excluded. Public routing/certificate fixes, QA/Permits hosted checks and final onboarding/mobile/recovery acceptance are still required before claiming the rollout complete.

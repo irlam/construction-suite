@@ -1,5 +1,7 @@
 # Construction Suite v0.4.0 — production-readiness matrix
 
+**Historical baseline:** the matrix below describes the earlier standalone integration. For the current 11 October 2026 deployment and validated test connections, see [Remaining integration deployment](REMAINING-INTEGRATIONS-DEPLOYMENT.md). Handover is excluded from the current Suite. Current repository privacy and hosted validation supersede the earlier statuses below; historical credential exposure is not undone by making a repository private.
+
 This is a truthful release gate. A green GitHub Action is necessary but does
 **not** prove the live booking, safety or defect data can be edited or recovered.
 

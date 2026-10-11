@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$setupRequired && $error === null)
       <img src="/assets/brand/logo.svg" class="auth-logo" alt="">
       <p class="eyebrow">CONSTRUCTION SUITE</p>
       <h1>One place for the work that keeps a site moving.</h1>
-      <p>Defects, deliveries, safety, permits, documents, handover and programme — built around the project you are working on.</p>
+      <p>Defects, deliveries, safety, permits, QA, notices and programme — built around the project you are working on.</p>
       <div class="auth-points">
         <span>Mobile first</span><span>Offline capable</span><span>Project controlled</span>
       </div>
