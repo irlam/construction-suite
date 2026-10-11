@@ -89,10 +89,10 @@ final class ModuleRegistry
                 $module['url'] = $instance['origin'];
                 $module['launch_url'] = '/launch.php?instance_id=' . $instance['id'];
                 $module['tenant_isolated'] = true;
-                $module['single_project_instance'] = true;
+                $module['single_project_instance'] = ($instance['scope_mode'] ?? '') !== 'company_site';
                 $module['integration_key_env'] = $instance['key_env'];
                 unset($module['summary_url'], $module['reference_url'], $module['health_url'], $module['external_project_ref']);
-                if (($instance['summary_verified'] ?? false) === true) $module['summary_url'] = $instance['origin'] . '/api/suite-summary.php';
+                if (($instance['summary_verified'] ?? false) === true && ($instance['scope_mode'] ?? '') !== 'company_site') $module['summary_url'] = $instance['origin'] . '/api/suite-summary.php';
                 $module['summary_requires_ref'] = false;
                 $module['single_calendar'] = false;
             }
@@ -110,6 +110,7 @@ final class ModuleRegistry
     {
         $result = [];
         foreach ($this->modules as $key => $module) {
+            if (!($module['enabled'] ?? false)) continue;
             $module['key'] = $key;
             $result[] = $module;
         }

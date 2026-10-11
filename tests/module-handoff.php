@@ -87,5 +87,18 @@ $db->exec("UPDATE memberships SET role_key='site_manager' WHERE user_id=2");
  $deny(fn()=>$sessions->validate(1,$workerSession['session_token'],$key,102),'Suite logout revokes connected tool sessions');
  $deny(fn()=>$handoff->redeem(1,$pending,$state,$key,101),'Suite logout cancels pending handoff');
  $check($sessions->validate(1,$ownerSession['session_token'],$key,102)['user_id']===1,'Logout leaves other user sessions intact');
+ $delivery=array_replace($item,['module_key'=>'deliveries','origin'=>'https://sitedeliveries.site','scope_mode'=>'company_site','local_site_id'=>1,'local_company_id'=>1]);
+ $deliveryOther=array_replace($delivery,['id'=>2,'organization_id'=>2,'project_id'=>2,'local_company_id'=>2]);
+ $check(count((new InstanceCatalog([$delivery,$deliveryOther]))->all())===2,'Explicit companies share physical delivery capacity');
+ $deny(fn()=>(new InstanceCatalog([$delivery,array_replace($deliveryOther,['local_company_id'=>1])]))->all(),'Different organisations cannot share delivery company ownership');
+ $deny(fn()=>(new InstanceCatalog([array_replace($delivery,['local_company_id'=>null])]))->all(),'Missing delivery company denied');
+ $deny(fn()=>(new InstanceCatalog([array_replace($item,['scope_mode'=>'company_site','local_site_id'=>1,'local_company_id'=>1])]))->all(),'Other module shared origin denied');
+ $deliveryHandoff=new ModuleHandoff(new InstanceCatalog([$delivery]));
+ $deliveryCode=$deliveryHandoff->issue($worker,1,$state,100);
+ $deliveryRebound=array_replace($delivery,['local_company_id'=>2]);
+ $deny(fn()=>(new ModuleHandoff(new InstanceCatalog([$deliveryRebound])))->redeem(1,$deliveryCode,$state,$key,101),'Delivery company rebind denies old handoff');
+ $deliveryIdentity=$deliveryHandoff->redeem(1,$deliveryCode,$state,$key,101);
+ $check($deliveryIdentity['local_company_id']===1&&$deliveryIdentity['local_site_id']===1,'Delivery identity carries explicit local ownership');
+ $deny(fn()=>(new \Suite\Auth\ModuleSession(new InstanceCatalog([$deliveryRebound])))->validate(1,$deliveryIdentity['session_token'],$key,102),'Delivery company rebind revokes old session');
  echo "PASS: Origin isolation, short-lived single-use handoffs, browser state, audience binding current access checks, revocable app sessions and transactional issuance.\n";
 } finally {@unlink($path);}

@@ -8,7 +8,7 @@ catch (Throwable $e) { http_response_code(403); exit('This project tool is not a
 $instance = $context['instance'];
 $state = (string) ($_GET['state'] ?? $_POST['state'] ?? '');
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && $state === '') {
-    header('Location: ' . $instance['origin'] . '/suite-login.php', true, 303); exit;
+    header('Location: ' . $instance['origin'] . '/suite-login.php?instance_id=' . $instanceId, true, 303); exit;
 }
 if (!preg_match('/^[a-f0-9]{64}$/D', $state)) { http_response_code(400); exit('Invalid sign-in state.'); }
 $code = null;

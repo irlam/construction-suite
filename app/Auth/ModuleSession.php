@@ -14,6 +14,7 @@ final class ModuleSession
     private function audience(array $i, ?array $validation = null): string
     {
         $binding=[$i['id'],$i['organization_id'],$i['project_id'],$i['module_key'],$i['origin']];
+        if (($i['scope_mode'] ?? '') === 'company_site') $binding[]=['company_site',$i['local_site_id'],$i['local_company_id']];
         if ($validation !== null) $binding[]=['validation',$validation['run_id'],$validation['expires_at']];
         return hash('sha256', json_encode($binding, JSON_THROW_ON_ERROR));
     }
@@ -29,9 +30,11 @@ final class ModuleSession
     private function identity(array $user, array $context, int $now): array
     {
         $i=$context['instance'];
-        return ['user_id'=>(int)$user['id'],'name'=>$user['name'],'email'=>$user['email'],
+        $identity = ['user_id'=>(int)$user['id'],'name'=>$user['name'],'email'=>$user['email'],
             'organization_id'=>$i['organization_id'],'project_id'=>$i['project_id'],
             'instance_id'=>$i['id'],'module_key'=>$i['module_key'],'role'=>$context['role'],'issued_at'=>$now];
+        if (($i['scope_mode'] ?? '') === 'company_site') $identity += ['local_site_id'=>$i['local_site_id'],'local_company_id'=>$i['local_company_id']];
+        return $identity;
     }
 
     /** Internal use after a successful one-use handoff; never a public issue API. */

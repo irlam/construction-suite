@@ -15,6 +15,7 @@ final class ModuleHandoff
     private function audience(array $instance, ?array $validation = null): string
     {
         $binding = [$instance['id'], $instance['organization_id'], $instance['project_id'], $instance['module_key'], $instance['origin']];
+        if (($instance['scope_mode'] ?? '') === 'company_site') $binding[]=['company_site',$instance['local_site_id'],$instance['local_company_id']];
         if ($validation !== null) $binding[] = ['validation', $validation['run_id'], $validation['expires_at']];
         return hash('sha256', json_encode($binding, JSON_THROW_ON_ERROR));
     }

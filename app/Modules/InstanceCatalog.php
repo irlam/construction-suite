@@ -51,7 +51,7 @@ final class InstanceCatalog
             $items = json_decode($bytes, true, 32, JSON_THROW_ON_ERROR);
         }
         if (!is_array($items) || !array_is_list($items)) throw new RuntimeException('Invalid instance inventory.');
-        $result = []; $bindings = []; $origins = [];
+        $result = []; $bindings = []; $origins = []; $deliveryCompanies = [];
         foreach ($items as $item) {
             if (!is_array($item)) throw new RuntimeException('Invalid instance entry.');
             foreach (['id', 'organization_id', 'project_id'] as $key) {
@@ -64,15 +64,26 @@ final class InstanceCatalog
             $parts = parse_url($url);
             $baseHost = parse_url((string) $definition['url'], PHP_URL_HOST);
             $host = strtolower((string) ($parts['host'] ?? ''));
+            $shared = ($item['scope_mode'] ?? '') === 'company_site';
+            if ($shared && ($key !== 'deliveries' || $host !== $baseHost
+                || !is_int($item['local_site_id'] ?? null) || $item['local_site_id'] < 1
+                || !is_int($item['local_company_id'] ?? null) || $item['local_company_id'] < 1)) {
+                throw new RuntimeException('Shared delivery access requires an explicit site and company binding.');
+            }
+            if ($shared) {
+                $owner = $deliveryCompanies[$item['local_company_id']] ?? $item['organization_id'];
+                if ($owner !== $item['organization_id']) throw new RuntimeException('A delivery company cannot belong to different Suite organisations.');
+                $deliveryCompanies[$item['local_company_id']] = $owner;
+            }
             if (!$parts || ($parts['scheme'] ?? '') !== 'https' || isset($parts['user']) || isset($parts['pass'])
                 || isset($parts['port']) || isset($parts['query']) || isset($parts['fragment'])
                 || ($parts['path'] ?? '') !== '' || !filter_var($host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)
-                || !str_ends_with($host, '.' . $baseHost) || $host === $baseHost) {
+                || (!$shared && (!str_ends_with($host, '.' . $baseHost) || $host === $baseHost))) {
                 throw new RuntimeException('An isolated instance needs its own HTTPS subdomain under the module domain.');
             }
             $url = 'https://' . $host;
             $binding = $item['project_id'] . ':' . $key;
-            if (isset($result[$item['id']]) || isset($bindings[$binding]) || isset($origins[$url])) throw new RuntimeException('Duplicate instance identity or project binding.');
+            if (isset($result[$item['id']]) || isset($bindings[$binding]) || (!$shared && isset($origins[$url]))) throw new RuntimeException('Duplicate instance identity or project binding.');
             $bindings[$binding] = true; $origins[$url] = true;
             $item['origin'] = $url;
             $item['key_env'] = 'SUITE_INSTANCE_KEY_' . $item['id'];

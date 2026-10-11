@@ -115,7 +115,7 @@ return [
         'icon' => 'check',
         'accent' => 'cyan',
         'offline' => 'Online module',
-        'enabled' => true,
+        'enabled' => false,
         'roles' => ['*'],
         'sort' => 60,
     ],

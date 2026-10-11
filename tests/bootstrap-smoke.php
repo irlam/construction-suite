@@ -9,7 +9,7 @@ $check = static function (bool $condition, string $message) use (&$failures): vo
 };
 
 $modules = suite_modules()->all('platform_admin');
-$check(count($modules) === 9, 'Expected nine Suite modules including QA.');
+$check(count($modules) === 8, 'Expected eight Suite modules with Handover excluded.');
 $check(class_exists(\Suite\Modules\ModuleHealth::class), 'Module health service is not wired.');
 $check(class_exists(\Suite\Support\Audit::class), 'Audit service is not wired.');
 $check(class_exists(\Suite\Database\Migrator::class), 'Database migrator is not wired.');
