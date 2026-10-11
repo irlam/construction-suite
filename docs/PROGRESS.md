@@ -119,3 +119,8 @@ Deliveries requires a shared site reservation authority: contractors using the s
 
 
 Private Defects verification helper prepared and deployed: `bin/defects-isolation-check.php --check` passed live, reporting both fixtures verified, zero writes, no Suite contact and readiness false. The executable mode uses the normal one-use handoff contract and fresh app validation, tests real own-register/file access before copied-cookie and foreign-file denial in both directions, then logout/revocation. It prints only check results and safe diagnostics, keeps keys/cookies/tokens private, and cleans its sessions. Authenticated execution has not occurred in this checkpoint; the temporary fixture validation window remains closed.
+
+
+## 11 October — authenticated Defects cross-instance verification
+
+After explicit owner approval, the one-hour six-account Defects window was opened, tested, then closed immediately. All 12 live checks passed: Alpha/Beta own registers, both copied-cookie denials, both own attachment SHA-256 matches, both foreign attachment 404s, both Suite session revocations, and both post-logout 401s. The closure receipt confirmed window_enabled=false, policy_absent=true, sessions_revoked=0 and grants_revoked=0 because the helper had already consumed/revoked its grants/sessions. Tenant readiness remains false and legacy workflows are not declared verified. Test receipts and screenshot are retained in ignored release/proof, containing no secrets.
